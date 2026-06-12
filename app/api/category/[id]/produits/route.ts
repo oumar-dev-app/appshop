@@ -1,30 +1,18 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-
-    const { id } = await params;
-
-    const [rows]: any = await db.query(
-      "SELECT * FROM produits WHERE category_id = ?",
-      [id]
-    );
-
-    return NextResponse.json(
-      { data: rows },
-      { status: 200 }
-    );
-
+    return NextResponse.json({
+      data: id,
+    });
   } catch (error) {
-
-    console.error(error);
-
     return NextResponse.json(
-      { message: "Erreur serveur" },
+      { message: error },
       { status: 500 }
     );
   }
