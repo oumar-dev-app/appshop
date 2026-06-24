@@ -1,12 +1,14 @@
-import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const commandeId = Number(params.id);
+    const { id } = await context.params;
+
+    const commandeId = Number(id);
 
     if (isNaN(commandeId)) {
       return NextResponse.json(
