@@ -1,16 +1,12 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-// =========================
-// PATCH - UPDATE STATUS
-// =========================
 export async function PATCH(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await context.params;
-    const commandeId = Number(id);
+    const commandeId = Number(params.id);
 
     if (isNaN(commandeId)) {
       return NextResponse.json(
@@ -22,9 +18,6 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body;
 
-    // =========================
-    // VALIDATION STATUS
-    // =========================
     const allowedStatus = [
       "pending",
       "confirmed",
@@ -42,9 +35,6 @@ export async function PATCH(
       );
     }
 
-    // =========================
-    // UPDATE DB
-    // =========================
     await db.query(
       `
       UPDATE commandes
