@@ -7,17 +7,17 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
-// =========================
-// FORMAT FCFA
-// =========================
+/* =========================
+   FORMAT FCFA
+========================= */
 const formatFCFA = (value: any) =>
     new Intl.NumberFormat("fr-FR", {
         maximumFractionDigits: 0,
     }).format(Number(value || 0)) + " FCFA";
 
-// =========================
-// TYPES
-// =========================
+/* =========================
+   TYPES (DB FR)
+========================= */
 type Commande = {
     id: number;
     reference: string;
@@ -37,17 +37,30 @@ type Produit = {
     prix_unitaire: number;
 };
 
-// =========================
-// COMPONENT
-// =========================
+/* =========================
+   STATUS LABELS (FR DB)
+========================= */
+const statusLabels: any = {
+    en_attente: "En attente",
+    confirmee: "Confirmée",
+    en_preparation: "En préparation",
+    expediee: "Expédiée",
+    livree: "Livrée 🚚",
+    recuperee: "Récupérée 🏪",
+    annulee: "Annulée",
+};
+
+/* =========================
+   COMPONENT
+========================= */
 export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
     const [open, setOpen] = useState(false);
     const [produits, setProduits] = useState<Produit[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
 
-    // =========================
-    // FETCH PRODUITS
-    // =========================
+    /* =========================
+       FETCH PRODUITS
+    ========================= */
     const fetchDetails = async () => {
         try {
             setLoadingProducts(true);
@@ -67,10 +80,10 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
         }
     };
 
-    // =========================
-    // UPDATE STATUS
-    // =========================
-    const updateStatus = async (status: "delivered" | "picked_up") => {
+    /* =========================
+       UPDATE STATUS (FIXED)
+    ========================= */
+    const updateStatus = async (status: "livree" | "recuperee") => {
         try {
             const token = localStorage.getItem("token");
 
@@ -89,15 +102,17 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
 
             toast.success("Statut mis à jour");
 
-            commande.status = status; // update UI simple
+            // update UI local
+            commande.status = status;
+
         } catch (err: any) {
             toast.error(err.message || "Erreur update statut");
         }
     };
 
-    // =========================
-    // PDF
-    // =========================
+    /* =========================
+       PDF
+    ========================= */
     const generatePDF = async () => {
         const token = localStorage.getItem("token");
 
@@ -135,40 +150,40 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
         doc.save(`facture-${commande.reference}.pdf`);
     };
 
-    // =========================
-    // TICKET
-    // =========================
+    /* =========================
+       PRINT
+    ========================= */
     const printTicket = () => {
         const win = window.open("", "PRINT", "width=400,height=600");
 
         win?.document.write(`
-      <html>
-      <head>
-        <title>Ticket</title>
-        <style>
-          body { font-family: monospace; padding: 20px; }
-          h2 { text-align: center; }
-        </style>
-      </head>
-      <body>
-        <h2>COMMANDE</h2>
-        <p>Ref: ${commande.reference}</p>
-        <p>Client: ${commande.nom_client}</p>
-        <p>Tel: ${commande.telephone}</p>
-        <p>Total: ${formatFCFA(commande.total)}</p>
-        <hr/>
-        <p style="text-align:center;">Merci 🙏</p>
-      </body>
-      </html>
-    `);
+            <html>
+            <head>
+                <title>Ticket</title>
+                <style>
+                    body { font-family: monospace; padding: 20px; }
+                    h2 { text-align: center; }
+                </style>
+            </head>
+            <body>
+                <h2>COMMANDE</h2>
+                <p>Ref: ${commande.reference}</p>
+                <p>Client: ${commande.nom_client}</p>
+                <p>Tel: ${commande.telephone}</p>
+                <p>Total: ${formatFCFA(commande.total)}</p>
+                <hr/>
+                <p style="text-align:center;">Merci 🙏</p>
+            </body>
+            </html>
+        `);
 
         win?.document.close();
         win?.print();
     };
 
-    // =========================
-    // WHATSAPP
-    // =========================
+    /* =========================
+       WHATSAPP
+    ========================= */
     const sendWhatsApp = () => {
         const phone = commande.telephone.replace(/[^\d]/g, "");
 
@@ -185,12 +200,12 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
         );
     };
 
-    // =========================
-    // UI
-    // =========================
+    /* =========================
+       UI
+    ========================= */
     return (
         <>
-            {/* BUTTON OPEN */}
+            {/* OPEN */}
             <button
                 onClick={async () => {
                     setOpen(true);
@@ -209,7 +224,7 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                         onClick={() => setOpen(false)}
                     />
 
-                    <div className="relative bg-white w-full max-w-md p-5 rounded-lg text-black">
+                    <div className="relative bg-white w-full max-w-md p-5 rounded-lg text-black m-3">
 
                         {/* HEADER */}
                         <div className="flex justify-between mb-4">
@@ -229,21 +244,16 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
 
                             <p>
                                 <b>Statut:</b>{" "}
-                                {commande.status === "delivered"
-                                    ? "Livrée 🚚"
-                                    : commande.status === "picked_up"
-                                        ? "Récupérée 🏪"
-                                        : "En cours ⏳"}
+                                {statusLabels[commande.status] || commande.status}
                             </p>
 
-                            {/* MESSAGE FINAL */}
-                            {commande.status === "delivered" && (
+                            {commande.status === "livree" && (
                                 <p className="text-green-600 text-xs">
                                     ✔ Commande livrée avec succès
                                 </p>
                             )}
 
-                            {commande.status === "picked_up" && (
+                            {commande.status === "recuperee" && (
                                 <p className="text-blue-600 text-xs">
                                     ✔ Commande récupérée
                                 </p>
@@ -270,7 +280,6 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                         {/* ACTIONS */}
                         <div className="mt-5 flex flex-col gap-2">
 
-                            {/* PDF */}
                             <button
                                 onClick={generatePDF}
                                 className="bg-blue-600 text-white py-2 rounded"
@@ -278,7 +287,6 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                                 📄 PDF facture
                             </button>
 
-                            {/* TICKET */}
                             <button
                                 onClick={printTicket}
                                 className="bg-gray-700 text-white py-2 rounded"
@@ -286,7 +294,6 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                                 🧾 Imprimer ticket
                             </button>
 
-                            {/* WHATSAPP */}
                             <button
                                 onClick={sendWhatsApp}
                                 className="bg-green-600 text-white py-2 rounded"
@@ -294,26 +301,22 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                                 📲 WhatsApp client
                             </button>
 
-                            {/* ========================= */}
-                            {/* 🚚 LIVRAISON */}
-                            {/* ========================= */}
+                            {/* LIVRAISON */}
                             {commande.mode_commande === "livraison" &&
-                                commande.status !== "delivered" && (
+                                commande.status !== "livree" && (
                                     <button
-                                        onClick={() => updateStatus("delivered")}
+                                        onClick={() => updateStatus("livree")}
                                         className="bg-emerald-600 text-white py-2 rounded"
                                     >
                                         🚚 Marquer comme livré
                                     </button>
                                 )}
 
-                            {/* ========================= */}
-                            {/* 🏪 COMMANDE (RETRAIT) */}
-                            {/* ========================= */}
+                            {/* COMMANDE */}
                             {commande.mode_commande === "commande" &&
-                                commande.status !== "picked_up" && (
+                                commande.status !== "recuperee" && (
                                     <button
-                                        onClick={() => updateStatus("picked_up")}
+                                        onClick={() => updateStatus("recuperee")}
                                         className="bg-indigo-600 text-white py-2 rounded"
                                     >
                                         🏪 Marquer comme récupéré

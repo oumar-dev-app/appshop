@@ -127,14 +127,14 @@ export default function SliderPage() {
                 {slider.map((item) => (
                     <div
                         key={item.id}
-                        className="bg-white border border-white rounded shadow hover:shadow-xl transition overflow-hidden text-black"
+                        className="bg-white rounded shadow hover:shadow-xl transition overflow-hidden text-black"
                     >
                         <img
                             src={
                                 item.image_url ||
                                 "/placeholder.png"
                             }
-                            className="w-full h-50 object-cover rounded-t-lg"
+                            className="w-full h-50 object-cover rounded-t"
                         />
                         <div className="m-3">
                             <h2 className="text-lg font-bold">

@@ -162,7 +162,7 @@ export async function POST(req: Request) {
         reference,
         userId,
         total,
-        "pending",
+        'en_attente',
         nom_client,
         telephone,
         addresse,

@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 export async function POST(req: Request) {
     try {
         const { email, password } = await req.json();
@@ -12,7 +11,7 @@ export async function POST(req: Request) {
             return NextResponse.json(
                 { message: "Email et mot de passe requis" },
                 { status: 400 }
-            )
+            );
         }
 
         const [rows]: any = await db.query(
@@ -22,9 +21,9 @@ export async function POST(req: Request) {
 
         if (!rows.length) {
             return NextResponse.json(
-                { message: "Identifient incorrect" },
+                { message: "Identifiant incorrect" },
                 { status: 404 }
-            )
+            );
         }
 
         const user = rows[0];
@@ -34,8 +33,8 @@ export async function POST(req: Request) {
         if (!isValid) {
             return NextResponse.json(
                 { message: "Mot de passe incorrect" },
-                { status: 404 }
-            )
+                { status: 401 }
+            );
         }
 
         const token = jwt.sign(
@@ -44,22 +43,31 @@ export async function POST(req: Request) {
             { expiresIn: "1d" }
         );
 
-        return NextResponse.json({
+        // 🔥 COOKIE HTTPONLY (IMPORTANT FIX)
+        const res = NextResponse.json({
             message: "Connexion réussie",
-            token,
             user: {
                 id: user.id,
                 nom: user.nom,
                 email: user.email,
-                role: user.role
+                role: user.role,
             },
         });
+
+        res.cookies.set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+        });
+
+        return res;
 
     } catch (error) {
         console.error(error);
         return NextResponse.json(
             { message: "Erreur serveur" },
             { status: 500 }
-        )
+        );
     }
 }

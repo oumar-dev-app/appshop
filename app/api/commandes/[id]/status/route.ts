@@ -20,14 +20,15 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body;
 
+    // ✅ STATUTS ALIGNÉS AVEC TA DB (FRANÇAIS)
     const allowedStatus = [
-      "pending",
-      "confirmed",
-      "preparing",
-      "shipped",
-      "delivered",
-      "picked_up",
-      "cancelled",
+      "en_attente",
+      "confirmee",
+      "en_preparation",
+      "expediee",
+      "livree",
+      "recuperee",
+      "annulee",
     ];
 
     if (!status || !allowedStatus.includes(status)) {

@@ -231,11 +231,11 @@ export default function ProduitsPage() {
                             paginatedProducts.map((p) => (
                                 <div
                                     key={p.id}
-                                    className="bg-white border border-white rounded shadow hover:shadow-xl transition overflow-hidden text-black"
+                                    className="bg-white  rounded shadow hover:shadow-xl transition overflow-hidden text-black"
                                 >
                                     <img
                                         src={p.image_url || "/placeholder.png"}
-                                        className="h-50 w-full object-cover rounded"
+                                        className="h-50 w-full object-cover rounded-t"
                                     />
 
                                     <div className="m-3">
