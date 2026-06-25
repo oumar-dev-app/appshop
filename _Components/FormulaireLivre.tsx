@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MapPin } from "lucide-react";
 
 import { CartItem } from "@/lib/cart";
+import { toast } from "sonner";
 
 type Props = {
   type: "commander" | "livre";
@@ -46,67 +47,67 @@ export default function FormulaireLivre({
   // =========================
   // 🛒 Submit
   // =========================
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const loading = toast.loading("Envoi de la commande...");
 
-    try {
+  try {
+    const token = localStorage.getItem("token");
 
-      const token =
-        localStorage.getItem("token");
-
-      const data = {
-        nom_client: nom,
-        telephone,
-        addresse,
-        gps: location,
-
-        mode_commande:
-          type === "livre"
-            ? "livraison"
-            : "commande",
-
-        paiement,
-
-        total,
-
-        produits: cart.map((item) => ({
-          produit_id: item.id,
-          quantite: item.quantity,
-        })),
-      };
-
-      const res = await fetch("/api/commandes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        alert(result.message);
-        return;
-      }
-
-      alert("Commande créée avec succès");
-
-      // 🧹 vider panier
-      localStorage.removeItem("cart");
-
-      window.location.reload();
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert("Erreur serveur");
+    if (!token) {
+      toast.dismiss(loading);
+      toast.error("Veuillez vous connecter");
+      return;
     }
-  };
+
+    const data = {
+      nom_client: nom,
+      telephone,
+      addresse,
+      gps: location,
+      mode_commande: type === "livre" ? "livraison" : "commande",
+      paiement,
+      total,
+      produits: cart.map((item) => ({
+        produit_id: item.id,
+        quantite: item.quantity,
+      })),
+    };
+
+    const res = await fetch("/api/commandes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    toast.dismiss(loading);
+
+    if (!res.ok) {
+      toast.error(result.message || "Erreur lors de la commande");
+      return;
+    }
+
+    toast.success("Commande créée avec succès");
+
+    // reset panier
+    localStorage.removeItem("cart");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+
+  } catch (error) {
+    toast.dismiss(loading);
+    toast.error("Erreur serveur");
+    console.error(error);
+  }
+};
 
   return (
     <div>
