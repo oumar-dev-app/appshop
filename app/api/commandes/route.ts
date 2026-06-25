@@ -98,7 +98,6 @@ export async function POST(req: Request) {
       `
       INSERT INTO commandes (
         reference,
-        user_id,
         total,
         status,
         nom_client,
@@ -107,11 +106,10 @@ export async function POST(req: Request) {
         gps,
         mode_commande
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         reference,
-        null, // 👈 pas d'utilisateur connecté
         total,
         "en_attente",
         nom_client,

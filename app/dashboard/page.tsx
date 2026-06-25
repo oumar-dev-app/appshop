@@ -98,7 +98,7 @@ export default function DashboardPage() {
                     <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         {/* TOTAL */}
-                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded flex gap-6 items-center">
+                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
                             <FaBox className="text-3xl text-green-500" />
                             <div>
                                 <p>Total commandes</p>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* TODAY */}
-                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded flex gap-6 items-center">
+                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
                             <FaCalendarDay className="text-3xl text-green-500" />
                             <div>
                                 <p>Commandes du jour</p>
@@ -122,7 +122,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* PENDING */}
-                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded flex gap-6 items-center">
+                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
                             <FaClock className="text-3xl text-orange-500" />
                             <div>
                                 <p>En attente</p>

@@ -30,7 +30,6 @@ type Commande = {
     total: number;
     status: string;
 };
-
 type Produit = {
     nom: string;
     quantite: number;
@@ -235,12 +234,52 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                         </div>
 
                         {/* INFOS */}
+                        {/* INFOS */}
                         <div className="text-sm space-y-1">
-                            <p><b>Ref:</b> {commande.reference}</p>
-                            <p><b>Client:</b> {commande.nom_client}</p>
-                            <p><b>Tél:</b> {commande.telephone}</p>
-                            <p><b>Total:</b> {formatFCFA(commande.total)}</p>
-                            <p><b>Mode:</b> {commande.mode_commande}</p>
+                            <p>
+                                <b>Ref:</b> {commande.reference}
+                            </p>
+
+                            <p>
+                                <b>Client:</b> {commande.nom_client}
+                            </p>
+
+                            <p>
+                                <b>Tél:</b> {commande.telephone}
+                            </p>
+
+                            <p>
+                                <b>Adresse:</b> {commande.addresse}
+                            </p>
+
+                            <p>
+                                <b>Total:</b> {formatFCFA(commande.total)}
+                            </p>
+
+                            <p>
+                                <b>Mode:</b>{" "}
+                                {commande.mode_commande === "livraison"
+                                    ? "Livraison 🚚"
+                                    : "Commande 🏪"}
+                            </p>
+
+                            {/* GPS UNIQUEMENT POUR LES LIVRAISONS */}
+                            {commande.mode_commande === "livraison" && commande.gps && (
+                                <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <p className="font-medium text-green-800">
+                                        📍 Localisation du client
+                                    </p>
+
+                                    <a
+                                        href={commande.gps}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline break-all"
+                                    >
+                                        Ouvrir dans Google Maps
+                                    </a>
+                                </div>
+                            )}
 
                             <p>
                                 <b>Statut:</b>{" "}

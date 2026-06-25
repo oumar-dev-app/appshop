@@ -44,7 +44,7 @@ function Header() {
     // 🧠 SAFE NAME FORMAT
     // =========================
     const getUserName = () => {
-        if (!user) return "Utilisateur";
+        if (!user) return "Admin";
 
         const prenom = user?.prenom || "";
         const nom = user?.nom || "";
@@ -78,7 +78,6 @@ function Header() {
                             height={40}
                             className="rounded-full object-cover"
                         />
-
                         <span className="hidden sm:block text-black font-medium">
                             {loading ? "Chargement..." : getUserName()}
                         </span>

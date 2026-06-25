@@ -1,9 +1,10 @@
 "use client";
+
 import { useState } from "react";
 import { MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 import { CartItem } from "@/lib/cart";
-import { toast } from "sonner";
 
 type Props = {
   type: "commander" | "livre";
@@ -16,7 +17,6 @@ export default function FormulaireLivre({
   cart,
   total,
 }: Props) {
-
   const [location, setLocation] = useState("");
 
   const [nom, setNom] = useState("");
@@ -28,20 +28,43 @@ export default function FormulaireLivre({
   // 📍 GPS
   // =========================
   const getLocation = () => {
-
     if (!navigator.geolocation) {
-      alert("Géolocalisation non supportée");
+      toast.error(
+        "La géolocalisation n'est pas supportée par cet appareil."
+      );
       return;
     }
 
-    navigator.geolocation.getCurrentPosition((pos) => {
+    const loading = toast.loading(
+      "Récupération de votre position..."
+    );
 
-      const { latitude, longitude } = pos.coords;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
 
-      setLocation(
-        `https://maps.google.com/?q=${latitude},${longitude}`
-      );
-    });
+        setLocation(
+          `https://maps.google.com/?q=${latitude},${longitude}`
+        );
+
+        toast.dismiss(loading);
+        toast.success("Localisation récupérée.");
+      },
+      (error) => {
+        console.error(error);
+
+        toast.dismiss(loading);
+
+        toast.error(
+          "Veuillez autoriser l'accès à votre localisation."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   // =========================
@@ -55,20 +78,32 @@ export default function FormulaireLivre({
       return;
     }
 
+    if (type === "livre" && !location) {
+      toast.error(
+        "La localisation GPS est obligatoire pour une livraison."
+      );
+      return;
+    }
+
     if (!cart || cart.length === 0) {
       toast.error("Panier vide");
       return;
     }
 
-    const loading = toast.loading("Envoi de la commande...");
+    const loading = toast.loading(
+      "Envoi de la commande..."
+    );
 
     try {
       const data = {
         nom_client: nom,
         telephone,
         addresse,
-        gps: location || null,
-        mode_commande: type === "livre" ? "livraison" : "commande",
+        gps: location,
+        mode_commande:
+          type === "livre"
+            ? "livraison"
+            : "commande",
         paiement,
         total,
         produits: cart.map((item) => ({
@@ -90,17 +125,22 @@ export default function FormulaireLivre({
       toast.dismiss(loading);
 
       if (!res.ok) {
-        toast.error(result.message || "Erreur lors de la commande");
+        toast.error(
+          result.message ||
+            "Erreur lors de la commande"
+        );
         return;
       }
 
-      toast.success("Commande créée avec succès");
+      toast.success(
+        "Commande envoyée avec succès"
+      );
 
       localStorage.removeItem("cart");
 
       setTimeout(() => {
         window.location.reload();
-      }, 800);
+      }, 1000);
 
     } catch (error) {
       toast.dismiss(loading);
@@ -111,14 +151,11 @@ export default function FormulaireLivre({
 
   return (
     <div>
-
       <form
         onSubmit={handleSubmit}
         className="space-y-4 text-black"
       >
-
         <h1 className="text-xl font-bold text-center">
-
           {type === "livre"
             ? "Formulaire de livraison"
             : "Formulaire de commande"}
@@ -165,33 +202,25 @@ export default function FormulaireLivre({
           }
           className="w-full border rounded-lg p-3 text-sm"
         >
-          <option>
-            Orange Money
-          </option>
-
-          <option>
-            Moov Money
-          </option>
-
+          <option>Orange Money</option>
+          <option>Moov Money</option>
           <option>
             Paiement à la livraison
           </option>
         </select>
 
-        {/* GPS */}
+        {/* GPS obligatoire pour livraison */}
         {type === "livre" && (
           <div className="space-y-2">
-
             <label className="text-sm font-medium">
-              Localisation GPS
+              Localisation GPS *
             </label>
 
             <div className="flex flex-col sm:flex-row gap-2">
-
               <input
                 value={location}
                 readOnly
-                placeholder="Cliquez sur GPS"
+                placeholder="Cliquez sur GPS pour récupérer votre position"
                 className="flex-1 border rounded-lg p-3 text-sm"
               />
 
@@ -203,9 +232,12 @@ export default function FormulaireLivre({
                 <MapPin size={18} />
                 GPS
               </button>
-
             </div>
 
+            <p className="text-xs text-red-500">
+              La localisation GPS est obligatoire
+              pour la livraison.
+            </p>
           </div>
         )}
 
@@ -214,20 +246,19 @@ export default function FormulaireLivre({
           Total : {total} FCFA
         </div>
 
-        {/* BTN */}
+        {/* BOUTON */}
         <button
           type="submit"
-          className="w-full bg-black text-white py-3 rounded-lg"
+          disabled={
+            type === "livre" && !location
+          }
+          className="w-full bg-black text-white py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {type === "livre"
             ? "Confirmer la livraison"
             : "Confirmer la commande"}
-
         </button>
-
       </form>
-
     </div>
   );
 }
-

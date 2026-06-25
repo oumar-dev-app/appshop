@@ -16,7 +16,8 @@ export async function GET(
       return NextResponse.json({ message: "ID invalide !" }, { status: 400 });
     }
 
-    const [rows]: any = await db.query(`
+    const [rows]: any = await db.query(
+      `
   SELECT
     c.id AS commande_id,
     c.reference,
@@ -24,24 +25,25 @@ export async function GET(
     c.mode_commande,
     c.status,
     c.created_at,
-
-    u.id AS user_id,
-    u.nom AS user_nom,
-    u.prenom,
-    u.telephone,
+    c.nom_client,
+    c.telephone,
+    c.addresse,
+    c.gps,
 
     ci.quantite,
     ci.prix_unitaire,
 
     p.id AS produit_id,
-    p.nom AS produit_nom
+    p.nom AS produit_nom,
+    p.prix AS produit_prix
 
   FROM commandes c
-  JOIN users u ON c.user_id = u.id
   LEFT JOIN commande_items ci ON c.id = ci.commande_id
-LEFT JOIN produits p ON ci.produit_id = p.id
-WHERE c.id = ?
-`, [commandeId]);
+  LEFT JOIN produits p ON ci.produit_id = p.id
+  WHERE c.id = ?
+  `,
+      [commandeId]
+    );
 
     if (!rows || rows.length === 0) {
       return NextResponse.json({ message: "Commande introuvable" }, { status: 404 });
@@ -54,29 +56,23 @@ WHERE c.id = ?
       total: rows[0].total,
       status: rows[0].status,
       created_at: rows[0].created_at,
-    };
-
-    // 👤 user
-    const user = {
-      id: rows[0].user_id,
-      nom: rows[0].user_nom,
-      prenom: rows[0].prenom,
+      nom_client: rows[0].nom_client,
       telephone: rows[0].telephone,
+      addresse: rows[0].addresse,
+      gps: rows[0].gps,
+      mode_commande: rows[0].mode_commande,
     };
 
-    // 📦 produits
-    // 📦 produits
     const produits = rows
       .filter((r: any) => r.produit_id !== null)
       .map((r: any) => ({
         nom: r.produit_nom,
         quantite: r.quantite,
-        prix_unitaire: r.prix_unitaire ?? r.produit_prix,
+        prix_unitaire: r.prix_unitaire,
       }));
 
     return NextResponse.json({
       commande,
-      user,
       produits,
     });
 
