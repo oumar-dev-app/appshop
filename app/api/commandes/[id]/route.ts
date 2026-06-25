@@ -16,7 +16,7 @@ export async function GET(
       return NextResponse.json({ message: "ID invalide !" }, { status: 400 });
     }
 
-const [rows]: any = await db.query(`
+    const [rows]: any = await db.query(`
   SELECT
     c.id AS commande_id,
     c.reference,
@@ -65,13 +65,13 @@ const [rows]: any = await db.query(`
     };
 
     // 📦 produits
-const produits = rows
-  .filter((r: any) => r.produit_id && r.produit_nom)
-  .map((r: any) => ({
-    nom: r.produit_nom,
-    quantite: r.quantite ?? 0,
-    prix_unitaire: r.prix_unitaire ?? 0,
-  }));
+    const produits = rows
+      .filter((r: any) => r.produit_id && r.produit_nom)
+      .map((r: any) => ({
+        nom: r.produit_nom,
+        quantite: Number(r.quantite || 0),
+        prix_unitaire: Number(r.prix_unitaire || 0),
+      }));
 
     return NextResponse.json({
       commande,
