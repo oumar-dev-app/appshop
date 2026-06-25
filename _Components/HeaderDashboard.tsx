@@ -13,6 +13,12 @@ function Header() {
             try {
                 const token = localStorage.getItem("token");
 
+                if (!token) {
+                    setUser(null);
+                    setLoading(false);
+                    return;
+                }
+
                 const res = await fetch("/api/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -22,6 +28,7 @@ function Header() {
                 const data = await res.json();
 
                 setUser(data.user || null);
+
             } catch (err) {
                 console.error(err);
                 setUser(null);
@@ -32,6 +39,22 @@ function Header() {
 
         fetchUser();
     }, []);
+
+    // =========================
+    // 🧠 SAFE NAME FORMAT
+    // =========================
+    const getUserName = () => {
+        if (!user) return "Utilisateur";
+
+        const prenom = user?.prenom || "";
+        const nom = user?.nom || "";
+
+        if (!prenom && !nom && user?.name) {
+            return user.name;
+        }
+
+        return `${prenom} ${nom}`.trim() || "Utilisateur";
+    };
 
     return (
         <header className="mx-4 sm:mx-6 lg:mx-8">
@@ -44,9 +67,10 @@ function Header() {
                 <div className="flex items-center space-x-3 sm:space-x-6">
 
                     <Link
-                        href={"/dashboard/reglage"}
+                        href="/dashboard/reglage"
                         className="flex items-center space-x-3"
                     >
+
                         <Image
                             src={user?.image_url || "/oumar.png"}
                             alt="user"
@@ -56,12 +80,9 @@ function Header() {
                         />
 
                         <span className="hidden sm:block text-black font-medium">
-                            {loading
-                                ? "Chargement..."
-                                : user
-                                ? ` ${user.prenom} ${user.nom}`
-                                : "Utilisateur"}
+                            {loading ? "Chargement..." : getUserName()}
                         </span>
+
                     </Link>
 
                 </div>
