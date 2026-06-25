@@ -38,7 +38,7 @@ const SliderBar = ({ mobile = false }: Props) => {
     ];
 
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center bg-black/90 backdrop-blur-md border-t border-gray-700 py-2">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center bg-black/90 backdrop-blur-md border-gray-700 py-2">
 
         {allMenu.map((item) => {
 
@@ -64,8 +64,9 @@ const SliderBar = ({ mobile = false }: Props) => {
                   pathname === item.href ? "text-green-400" : "text-white"
                 }`}
               >
-                <div className="p-4">
+                <div className="p-4 flex flex-col">
                   {item.icon}
+                  <span className="ml-4 text-sm">{item.name}</span>
                 </div>
               </div>
             </Link>
@@ -84,7 +85,7 @@ const SliderBar = ({ mobile = false }: Props) => {
       isSidebarOpen ? "w-64" : "w-20"
     }`}>
 
-      <div className="h-full bg-white  shadow-lg text-black p-4 flex flex-col">
+      <div className="h-full bg-white shadow-lg text-black p-4 flex flex-col">
 
         {/* TOGGLE */}
         <button
