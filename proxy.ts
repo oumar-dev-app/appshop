@@ -27,7 +27,8 @@ export async function proxy(req: NextRequest) {
       pathname.startsWith("/api/homebar") ||
       pathname.startsWith("/api/users") ||
       pathname.startsWith("/api/test-db") ||
-      pathname.startsWith("/api/commandes")
+      pathname.startsWith("/api/commandes") ||
+      pathname.startsWith("/api/me")
     ) && method === "GET"
 
   const isPublicLike =
