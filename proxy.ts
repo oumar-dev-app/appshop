@@ -15,7 +15,7 @@ export async function proxy(req: NextRequest) {
     "/api/upload",
   ];
 
-  const isPublicRoute = publicRoutes.some(route =>
+  const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
@@ -41,20 +41,20 @@ export async function proxy(req: NextRequest) {
   // =========================
   // 🔐 TOKEN CHECK
   // =========================
-  const authHeader = req.headers.get("authorization");
+  console.log("COOKIE TOKEN =", req.cookies.get("token"));
+  const token = req.cookies.get("token")?.value;
 
-  if (!authHeader) {
+  if (!token) {
+    // Pour les pages dashboard → redirection login
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(
+        new URL("/login", req.url)
+      );
+    }
+
+    // Pour les API → erreur JSON
     return NextResponse.json(
       { message: "Token manquant" },
-      { status: 401 }
-    );
-  }
-
-  const [bearer, token] = authHeader.split(" ");
-
-  if (bearer !== "Bearer" || !token) {
-    return NextResponse.json(
-      { message: "Format invalide" },
       { status: 401 }
     );
   }
@@ -72,7 +72,7 @@ export async function proxy(req: NextRequest) {
       "/api/commandes",
     ];
 
-    const isAdminRoute = adminRoutes.some(route =>
+    const isAdminRoute = adminRoutes.some((route) =>
       pathname.startsWith(route)
     );
 
@@ -86,6 +86,12 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
 
   } catch (error) {
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(
+        new URL("/login", req.url)
+      );
+    }
+
     return NextResponse.json(
       { message: "Token invalide" },
       { status: 401 }
@@ -93,12 +99,10 @@ export async function proxy(req: NextRequest) {
   }
 }
 
-// =========================
-// ⚠️ IMPORTANT EXPORT CONFIG
-// =========================
 export const config = {
   matcher: [
     "/api/:path*",
     "/dashboard/:path*",
   ],
 };
+
