@@ -84,7 +84,7 @@ const SliderBar = ({ mobile = false }: Props) => {
       isSidebarOpen ? "w-64" : "w-20"
     }`}>
 
-      <div className="h-full bg-white border-r shadow-lg text-black p-4 flex flex-col">
+      <div className="h-full bg-white  shadow-lg text-black p-4 flex flex-col">
 
         {/* TOGGLE */}
         <button
