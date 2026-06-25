@@ -35,7 +35,7 @@ function ServiceClientel() {
 
     return (
         <div className='flex flex-col gap-2 text-white'>
-            <h1 className='font-bold text-white'>Service Clientel</h1>
+            <h1 className='font-bold text-white'>Service Client</h1>
             <div className='flex items-center gap-3'>
                 <FiPhoneCall />
                 <p>(+223)</p>{user?.telephone}
