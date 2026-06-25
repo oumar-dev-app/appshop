@@ -78,22 +78,13 @@ export default function FormulaireLivre({
         })),
       };
 
-      const res = await fetch(
-        "/api/commandes",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            Authorization:
-              `Bearer ${token}`,
-          },
-
-          body: JSON.stringify(data),
-        }
-      );
+      const res = await fetch("/api/commandes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       const result = await res.json();
 
