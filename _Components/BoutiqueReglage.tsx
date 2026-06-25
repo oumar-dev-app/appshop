@@ -27,6 +27,7 @@ const BoutiqueReglage = () => {
             if (data.data) {
                 setNom(data.data.nom || '');
                 setLogo(data.data.logo || '');
+                setApropos(data.data.logo || '');
             }
         } catch (error) {
             console.error(error);
