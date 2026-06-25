@@ -126,7 +126,7 @@ const CategoryButton = React.memo(
     }) => (
         <button
             onClick={onClick}
-            className={`px-4 py-2 rounded border whitespace-nowrap transition font-medium
+            className={`px-3 py-2 rounded border whitespace-nowrap transition font-medium
                 ${selected
                     ? 'bg-green-500 text-white border-green-500'
                     : 'bg-white text-black border-gray-300 hover:bg-gray-100'
