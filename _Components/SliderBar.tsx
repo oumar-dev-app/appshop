@@ -30,52 +30,65 @@ const SliderBar = ({ mobile = false }: Props) => {
   // =========================
   // 📱 MOBILE NAV
   // =========================
-  if (mobile) {
-    const allMenu = [
-      ...DashboardMenu1,
-      ...DashboardMenu2,
-      ...DashboardMenu3,
-    ];
+if (mobile) {
+  const allMenu = [
+    ...DashboardMenu1,
+    ...DashboardMenu2,
+    ...DashboardMenu3,
+  ];
 
-    return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center bg-black/90 backdrop-blur-md border-gray-700 py-2">
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-gray-700">
+
+      <div className="flex justify-around items-center py-2">
 
         {allMenu.map((item) => {
 
-          // 🔥 logout mobile
+          // LOGOUT
           if (item.action === "logout") {
             return (
               <button
                 key={item.name}
                 onClick={handleLogout}
-                className="flex flex-col items-center text-white"
+                className="flex flex-col items-center justify-center gap-1 text-red-500 min-w-[60px]"
               >
-                <div className="p-2 text-red-500">
+                <div className="text-xl">
                   {item.icon}
                 </div>
+
+                <span className="text-[10px] leading-none text-center">
+                  {item.name}
+                </span>
               </button>
             );
           }
 
+          // LIENS NORMAUX
           return (
-            <Link key={item.name} href={item.href}>
-              <div
-                className={`flex flex-col items-center text-md ${
-                  pathname === item.href ? "text-green-400" : "text-white"
-                }`}
-              >
-                <div className="p-4 flex flex-col">
-                  {item.icon}
-                  <span className="ml-4 text-sm">{item.name}</span>
-                </div>
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex flex-col items-center justify-center gap-1 min-w-[60px] transition ${
+                pathname === item.href
+                  ? "text-green-400"
+                  : "text-white"
+              }`}
+            >
+              <div className="text-xl">
+                {item.icon}
               </div>
+
+              <span className="text-[10px] leading-none text-center">
+                {item.name}
+              </span>
             </Link>
           );
         })}
 
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // =========================
   // 💻 DESKTOP SIDEBAR
