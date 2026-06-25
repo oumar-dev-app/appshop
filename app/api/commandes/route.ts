@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 
-
 export async function GET(req: Request) {
   try {
     const [rows]: any = await db.query(
@@ -37,6 +36,9 @@ export async function POST(req: Request) {
       mode_commande,
     } = body;
 
+    // =========================
+    // VALIDATION PANIER
+    // =========================
     if (!produits || !Array.isArray(produits) || produits.length === 0) {
       return NextResponse.json(
         { message: "Panier vide" },
@@ -44,6 +46,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // =========================
+    // VALIDATION MODE
+    // =========================
     if (
       mode_commande !== "commande" &&
       mode_commande !== "livraison"
@@ -54,6 +59,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // =========================
+    // CALCUL TOTAL + CHECK STOCK
+    // =========================
     let total = 0;
 
     for (const item of produits) {
@@ -81,6 +89,9 @@ export async function POST(req: Request) {
       total += produit.prix * item.quantite;
     }
 
+    // =========================
+    // CREATE ORDER
+    // =========================
     const reference = `CMD-${Date.now()}`;
 
     const [commandeResult]: any = await db.query(
@@ -100,7 +111,7 @@ export async function POST(req: Request) {
       `,
       [
         reference,
-        null,
+        null, // 👈 pas d'utilisateur connecté
         total,
         "en_attente",
         nom_client,
@@ -113,6 +124,9 @@ export async function POST(req: Request) {
 
     const commandeId = commandeResult.insertId;
 
+    // =========================
+    // INSERT ITEMS + UPDATE STOCK
+    // =========================
     for (const item of produits) {
       const [rows]: any = await db.query(
         "SELECT * FROM produits WHERE id = ?",
@@ -131,7 +145,12 @@ export async function POST(req: Request) {
         )
         VALUES (?, ?, ?, ?)
         `,
-        [commandeId, item.produit_id, item.quantite, produit.prix]
+        [
+          commandeId,
+          item.produit_id,
+          item.quantite,
+          produit.prix,
+        ]
       );
 
       await db.query(
@@ -144,6 +163,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // =========================
+    // SUCCESS
+    // =========================
     return NextResponse.json({
       success: true,
       message: "Commande créée avec succès",

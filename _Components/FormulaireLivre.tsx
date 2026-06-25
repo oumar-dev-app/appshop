@@ -47,67 +47,67 @@ export default function FormulaireLivre({
   // =========================
   // 🛒 Submit
   // =========================
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const loading = toast.loading("Envoi de la commande...");
+    if (!nom || !telephone || !addresse) {
+      toast.error("Tous les champs sont requis");
+      return;
+    }
 
-  try {
-    const token = localStorage.getItem("token");
+    if (!cart || cart.length === 0) {
+      toast.error("Panier vide");
+      return;
+    }
 
-    if (!token) {
+    const loading = toast.loading("Envoi de la commande...");
+
+    try {
+      const data = {
+        nom_client: nom,
+        telephone,
+        addresse,
+        gps: location || null,
+        mode_commande: type === "livre" ? "livraison" : "commande",
+        paiement,
+        total,
+        produits: cart.map((item) => ({
+          produit_id: item.id,
+          quantite: item.quantity,
+        })),
+      };
+
+      const res = await fetch("/api/commandes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
       toast.dismiss(loading);
-      toast.error("Veuillez vous connecter");
-      return;
+
+      if (!res.ok) {
+        toast.error(result.message || "Erreur lors de la commande");
+        return;
+      }
+
+      toast.success("Commande créée avec succès");
+
+      localStorage.removeItem("cart");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+
+    } catch (error) {
+      toast.dismiss(loading);
+      toast.error("Erreur serveur");
+      console.error(error);
     }
-
-    const data = {
-      nom_client: nom,
-      telephone,
-      addresse,
-      gps: location,
-      mode_commande: type === "livre" ? "livraison" : "commande",
-      paiement,
-      total,
-      produits: cart.map((item) => ({
-        produit_id: item.id,
-        quantite: item.quantity,
-      })),
-    };
-
-    const res = await fetch("/api/commandes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await res.json();
-
-    toast.dismiss(loading);
-
-    if (!res.ok) {
-      toast.error(result.message || "Erreur lors de la commande");
-      return;
-    }
-
-    toast.success("Commande créée avec succès");
-
-    // reset panier
-    localStorage.removeItem("cart");
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-
-  } catch (error) {
-    toast.dismiss(loading);
-    toast.error("Erreur serveur");
-    console.error(error);
-  }
-};
+  };
 
   return (
     <div>

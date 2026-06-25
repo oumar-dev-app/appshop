@@ -28,7 +28,7 @@ export async function proxy(req: NextRequest) {
       pathname.startsWith("/api/users") ||
       pathname.startsWith("/api/test-db") ||
       pathname.startsWith("/api/commandes")
-    ) && method === "GET";
+    ) && method === "GET"
 
   const isPublicLike =
     /^\/api\/produits\/\d+\/like$/.test(pathname) &&
