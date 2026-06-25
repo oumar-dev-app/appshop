@@ -59,7 +59,7 @@ function Header() {
                             {loading
                                 ? "Chargement..."
                                 : user
-                                ? ` ${user.nom}`
+                                ? ` ${user.prenom} ${user.nom}`
                                 : "Utilisateur"}
                         </span>
                     </Link>
