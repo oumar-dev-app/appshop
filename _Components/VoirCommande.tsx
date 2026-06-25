@@ -7,11 +7,17 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
-/* ========================= */
+/* =========================
+   FORMAT FCFA
+========================= */
 const formatFCFA = (value: any) =>
-    new Intl.NumberFormat("fr-FR").format(Number(value || 0)) + " FCFA";
+    new Intl.NumberFormat("fr-FR", {
+        maximumFractionDigits: 0,
+    }).format(Number(value || 0)) + " FCFA";
 
-/* ========================= */
+/* =========================
+   TYPES (DB FR)
+========================= */
 type Commande = {
     id: number;
     reference: string;
@@ -31,6 +37,9 @@ type Produit = {
     prix_unitaire: number;
 };
 
+/* =========================
+   STATUS LABELS (FR DB)
+========================= */
 const statusLabels: any = {
     en_attente: "En attente",
     confirmee: "Confirmée",
@@ -41,15 +50,17 @@ const statusLabels: any = {
     annulee: "Annulée",
 };
 
-export default function VoirCommandeBtn({
-    commande,
-}: {
-    commande: Commande;
-}) {
+/* =========================
+   COMPONENT
+========================= */
+export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
     const [open, setOpen] = useState(false);
     const [produits, setProduits] = useState<Produit[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
 
+    /* =========================
+       FETCH PRODUITS
+    ========================= */
     const fetchDetails = async () => {
         try {
             setLoadingProducts(true);
@@ -57,25 +68,141 @@ export default function VoirCommandeBtn({
             const token = localStorage.getItem("token");
 
             const res = await fetch(`/api/commandes/${commande.id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             const data = await res.json();
-
-            console.log("DEBUG PRODUITS API =>", data);
-
-            setProduits(data?.produits ?? []);
+            setProduits(data.produits || []);
         } catch (err) {
             console.error(err);
-            toast.error("Erreur chargement produits");
-            setProduits([]);
         } finally {
             setLoadingProducts(false);
         }
     };
 
+    /* =========================
+       UPDATE STATUS (FIXED)
+    ========================= */
+    const updateStatus = async (status: "livree" | "recuperee") => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(`/api/commandes/${commande.id}/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ status }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message);
+
+            toast.success("Statut mis à jour");
+
+            // update UI local
+            commande.status = status;
+
+        } catch (err: any) {
+            toast.error(err.message || "Erreur update statut");
+        }
+    };
+
+    /* =========================
+       PDF
+    ========================= */
+    const generatePDF = async () => {
+        const token = localStorage.getItem("token");
+
+        let dataProduits = produits;
+
+        if (produits.length === 0) {
+            const res = await fetch(`/api/commandes/${commande.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const data = await res.json();
+            dataProduits = data.produits || [];
+            setProduits(dataProduits);
+        }
+
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.text("FACTURE DE COMMANDE", 50, 20);
+
+        autoTable(doc, {
+            startY: 40,
+            head: [["Produit", "Qté", "Prix", "Total"]],
+            body: dataProduits.map((p) => [
+                p.nom,
+                p.quantite,
+                formatFCFA(p.prix_unitaire),
+                formatFCFA(p.quantite * p.prix_unitaire),
+            ]),
+        });
+
+        const finalY = (doc as any).lastAutoTable.finalY + 10;
+        doc.text(`TOTAL: ${formatFCFA(commande.total)}`, 10, finalY);
+
+        doc.save(`facture-${commande.reference}.pdf`);
+    };
+
+    /* =========================
+       PRINT
+    ========================= */
+    const printTicket = () => {
+        const win = window.open("", "PRINT", "width=400,height=600");
+
+        win?.document.write(`
+            <html>
+            <head>
+                <title>Ticket</title>
+                <style>
+                    body { font-family: monospace; padding: 20px; }
+                    h2 { text-align: center; }
+                </style>
+            </head>
+            <body>
+                <h2>COMMANDE</h2>
+                <p>Ref: ${commande.reference}</p>
+                <p>Client: ${commande.nom_client}</p>
+                <p>Tel: ${commande.telephone}</p>
+                <p>Total: ${formatFCFA(commande.total)}</p>
+                <hr/>
+                <p style="text-align:center;">Merci 🙏</p>
+            </body>
+            </html>
+        `);
+
+        win?.document.close();
+        win?.print();
+    };
+
+    /* =========================
+       WHATSAPP
+    ========================= */
+    const sendWhatsApp = () => {
+        const phone = commande.telephone.replace(/[^\d]/g, "");
+
+        const message =
+            `Bonjour ${commande.nom_client},\n\n` +
+            `Réf: ${commande.reference}\n` +
+            `Adresse: ${commande.addresse}\n` +
+            `Total: ${formatFCFA(commande.total)}\n\n` +
+            `Merci pour votre confiance 🙏`;
+
+        window.open(
+            `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+            "_blank"
+        );
+    };
+
+    /* =========================
+       UI
+    ========================= */
     return (
         <>
             {/* OPEN */}
@@ -97,7 +224,7 @@ export default function VoirCommandeBtn({
                         onClick={() => setOpen(false)}
                     />
 
-                    <div className="relative bg-white w-full max-w-md p-5 rounded-lg text-black m-3 max-h-[90vh] overflow-y-auto">
+                    <div className="relative bg-white w-full max-w-md p-5 rounded-lg text-black m-3">
 
                         {/* HEADER */}
                         <div className="flex justify-between mb-4">
@@ -113,11 +240,24 @@ export default function VoirCommandeBtn({
                             <p><b>Client:</b> {commande.nom_client}</p>
                             <p><b>Tél:</b> {commande.telephone}</p>
                             <p><b>Total:</b> {formatFCFA(commande.total)}</p>
+                            <p><b>Mode:</b> {commande.mode_commande}</p>
 
                             <p>
                                 <b>Statut:</b>{" "}
                                 {statusLabels[commande.status] || commande.status}
                             </p>
+
+                            {commande.status === "livree" && (
+                                <p className="text-green-600 text-xs">
+                                    ✔ Commande livrée avec succès
+                                </p>
+                            )}
+
+                            {commande.status === "recuperee" && (
+                                <p className="text-blue-600 text-xs">
+                                    ✔ Commande récupérée
+                                </p>
+                            )}
                         </div>
 
                         {/* PRODUITS */}
@@ -125,9 +265,7 @@ export default function VoirCommandeBtn({
                             <h3 className="font-bold">Produits</h3>
 
                             {loadingProducts ? (
-                                <p className="text-sm text-gray-500">Chargement...</p>
-                            ) : produits.length === 0 ? (
-                                <p className="text-sm text-red-500">Aucun produit trouvé</p>
+                                <p>Chargement...</p>
                             ) : (
                                 <ul className="text-sm">
                                     {produits.map((p, i) => (
@@ -137,6 +275,54 @@ export default function VoirCommandeBtn({
                                     ))}
                                 </ul>
                             )}
+                        </div>
+
+                        {/* ACTIONS */}
+                        <div className="mt-5 flex flex-col gap-2">
+
+                            <button
+                                onClick={generatePDF}
+                                className="bg-blue-600 text-white py-2 rounded"
+                            >
+                                📄 PDF facture
+                            </button>
+
+                            <button
+                                onClick={printTicket}
+                                className="bg-gray-700 text-white py-2 rounded"
+                            >
+                                🧾 Imprimer ticket
+                            </button>
+
+                            <button
+                                onClick={sendWhatsApp}
+                                className="bg-green-600 text-white py-2 rounded"
+                            >
+                                📲 WhatsApp client
+                            </button>
+
+                            {/* LIVRAISON */}
+                            {commande.mode_commande === "livraison" &&
+                                commande.status !== "livree" && (
+                                    <button
+                                        onClick={() => updateStatus("livree")}
+                                        className="bg-emerald-600 text-white py-2 rounded"
+                                    >
+                                        🚚 Marquer comme livré
+                                    </button>
+                                )}
+
+                            {/* COMMANDE */}
+                            {commande.mode_commande === "commande" &&
+                                commande.status !== "recuperee" && (
+                                    <button
+                                        onClick={() => updateStatus("recuperee")}
+                                        className="bg-indigo-600 text-white py-2 rounded"
+                                    >
+                                        🏪 Marquer comme récupéré
+                                    </button>
+                                )}
+
                         </div>
                     </div>
                 </div>

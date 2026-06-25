@@ -85,7 +85,6 @@ WHERE c.id = ?
     return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }
-
 // =========================
 // DELETE
 // =========================
