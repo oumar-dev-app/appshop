@@ -39,8 +39,8 @@ export async function GET(
   FROM commandes c
   JOIN users u ON c.user_id = u.id
   LEFT JOIN commande_items ci ON c.id = ci.commande_id
-  LEFT JOIN produits p ON ci.produit_id = p.id
-  WHERE c.id = ?
+LEFT JOIN produits p ON ci.produit_id = p.id
+WHERE c.id = ?
 `, [commandeId]);
 
     if (!rows || rows.length === 0) {
@@ -65,12 +65,13 @@ export async function GET(
     };
 
     // 📦 produits
+    // 📦 produits
     const produits = rows
       .filter((r: any) => r.produit_id !== null)
       .map((r: any) => ({
-        nom: r.produit_nom ?? "Produit inconnu",
-        quantite: Number(r.quantite || 0),
-        prix_unitaire: Number(r.prix_unitaire || r.produit_prix || 0),
+        nom: r.produit_nom,
+        quantite: r.quantite,
+        prix_unitaire: r.prix_unitaire ?? r.produit_prix,
       }));
 
     return NextResponse.json({
