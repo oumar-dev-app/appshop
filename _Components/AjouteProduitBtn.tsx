@@ -152,122 +152,125 @@ const AjouteProduitBtn = () => {
             </button>
 
             {/* MODAL */}
+            {/* MODAL */}
             {modal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center m-3">
+                <div className="fixed inset-0 z-50 overflow-y-auto">
 
                     {/* BACKDROP */}
                     <div
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={() => setModal(false)}
                     />
 
-                    {/* CONTENT */}
-                    <div className="relative bg-white text-black w-full max-w-md p-6 rounded shadow-lg m-3">
+                    <div className="min-h-screen flex items-center justify-center p-3">
 
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold">
-                                Ajouter un produit
-                            </h2>
+                        {/* CONTENT */}
+                        <div className="relative bg-white text-black w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded shadow-lg">
 
-                            <button onClick={() => setModal(false)}>
-                                <X size={22} />
-                            </button>
-                        </div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold">
+                                    Ajouter un produit
+                                </h2>
 
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                                <button onClick={() => setModal(false)}>
+                                    <X size={22} />
+                                </button>
+                            </div>
 
-                            {/* IMAGE PREVIEW */}
-                            {imageUrl && (
-                                <img
-                                    src={imageUrl}
-                                    className="w-full h-40 object-cover rounded border"
-                                    alt="preview"
+                            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+
+                                {/* IMAGE PREVIEW */}
+                                {imageUrl && (
+                                    <img
+                                        src={imageUrl}
+                                        className="w-full h-28 sm:h-40 object-cover rounded border"
+                                        alt="preview"
+                                    />
+                                )}
+
+                                {/* UPLOAD */}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        await uploadImage(file);
+                                    }}
+                                    className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
                                 />
-                            )}
 
-                            {/* UPLOAD */}
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (!file) return;
-                                    await uploadImage(file);
-                                }}
-                                className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                            />
+                                {uploading && (
+                                    <p className="text-sm text-blue-500">
+                                        Upload image...
+                                    </p>
+                                )}
 
-                            {uploading && (
-                                <p className="text-sm text-blue-500">
-                                    Upload image...
-                                </p>
-                            )}
+                                <input
+                                    type="text"
+                                    placeholder="Nom"
+                                    value={nom}
+                                    onChange={(e) => setNom(e.target.value)}
+                                    className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
 
-                            <input
-                                type="text"
-                                placeholder="Nom"
-                                value={nom}
-                                onChange={(e) => setNom(e.target.value)}
-                                className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                            />
+                                <textarea
+                                    placeholder="Description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    className="border p-2 rounded h-40 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
 
-                            <textarea
-                                placeholder="Description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                className="border p-2 rounded h-40 focus:outline-none focus:ring-2 focus:ring-green-500"
-                            />
+                                <input
+                                    type="number"
+                                    placeholder="Prix"
+                                    value={prix ?? ""}
+                                    onChange={(e) => setPrix(Number(e.target.value))}
+                                    className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
 
+                                <input
+                                    type="number"
+                                    placeholder="Stock"
+                                    value={stock ?? ""}
+                                    onChange={(e) => setStock(Number(e.target.value))}
+                                    className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
 
-                            <input
-                                type="number"
-                                placeholder="Prix"
-                                value={prix}
-                                onChange={(e) => setPrix(Number(e.target.value))}
-                                className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                            />
+                                <select
+                                    value={category_id}
+                                    onChange={(e) => setCategory_id(e.target.value)}
+                                    className="w-full border p-2 rounded bg-white text-black text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+                                >
+                                    <option value="">Choisir une catégorie</option>
 
-                            <input
-                                type="number"
-                                placeholder="Stock"
-                                value={stock}
-                                onChange={(e) => setStock(Number(e.target.value))}
-                                className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                            />
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.nom}
+                                        </option>
+                                    ))}
+                                </select>
 
-                            <select
-                                value={category_id}
-                                onChange={(e) => setCategory_id(e.target.value)}
-                                className="w-full border p-2 rounded bg-white text-black text-base focus:outline-none focus:ring-2 focus:ring-green-500"
-                            >
-                                <option value="">Choisir une catégorie</option>
+                                <select
+                                    value={section}
+                                    onChange={(e) => setSection(e.target.value)}
+                                    className="border p-2 rounded"
+                                >
+                                    <option value="">Choisir une section</option>
+                                    <option value="populaire">Populaire</option>
+                                    <option value="meilleur offre">Meilleur Offre</option>
+                                </select>
 
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.nom}
-                                    </option>
-                                ))}
-                            </select>
-                            <select
-                                value={section}
-                                onChange={(e) => setSection(e.target.value)}
-                                className="border p-2 rounded"
-                            >
-                                <option value="">Choisir une section</option>
-                                <option value="populaire">Populaire</option>
-                                <option value="meilleur offre">Meilleur Offre</option>
-                            </select>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="sticky bottom-0 bg-green-600 text-white py-3 rounded hover:bg-green-700 disabled:opacity-50"
+                                >
+                                    {saving ? "Enregistrement..." : "Ajouter"}
+                                </button>
 
-                            {/* ACTION */}
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
-                            >
-                                {saving ? "Enregistrement..." : "Ajouter"}
-                            </button>
-
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
