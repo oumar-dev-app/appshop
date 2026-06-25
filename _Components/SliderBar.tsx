@@ -30,73 +30,80 @@ const SliderBar = ({ mobile = false }: Props) => {
   // =========================
   // 📱 MOBILE NAV
   // =========================
-if (mobile) {
-  const allMenu = [
-    ...DashboardMenu1,
-    ...DashboardMenu2,
-    ...DashboardMenu3,
-  ];
+  if (mobile) {
+    const allMenu = [
+      ...DashboardMenu1,
+      ...DashboardMenu2,
+      ...DashboardMenu3,
+    ];
 
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-gray-700">
+    return (
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-gray-700">
+        <div className="flex justify-around items-center py-2">
 
-      <div className="flex justify-around items-center py-2">
+          {allMenu.map((item) => {
 
-        {allMenu.map((item) => {
+            const mobileLabel =
+              item.name === "Commandes"
+                ? "Cmd"
+                : item.name === "Catégories"
+                  ? "Cat."
+                  : item.name === "Déconnexion"
+                    ? "Quitter"
+                    : item.name === "Paramètres"
+                      ? "Régl."
+                      : item.name;
 
-          // LOGOUT
-          if (item.action === "logout") {
+            // LOGOUT
+            if (item.action === "logout") {
+              return (
+                <button
+                  key={item.name}
+                  onClick={handleLogout}
+                  className="flex flex-col items-center justify-center gap-1 text-red-500 min-w-12.5"
+                >
+                  <div className="text-xl">
+                    {item.icon}
+                  </div>
+
+                  <span className="text-[10px] leading-none text-center">
+                    {mobileLabel}
+                  </span>
+                </button>
+              );
+            }
+
             return (
-              <button
+              <Link
                 key={item.name}
-                onClick={handleLogout}
-                className="flex flex-col items-center justify-center gap-1 text-red-500 min-w-[60px]"
+                href={item.href}
+                className={`flex flex-col items-center justify-center gap-1 min-w-12.5 transition ${pathname === item.href
+                    ? "text-green-400"
+                    : "text-white"
+                  }`}
               >
                 <div className="text-xl">
                   {item.icon}
                 </div>
 
                 <span className="text-[10px] leading-none text-center">
-                  {item.name}
+                  {mobileLabel}
                 </span>
-              </button>
+              </Link>
             );
-          }
+          })}
 
-          // LIENS NORMAUX
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 min-w-[60px] transition ${
-                pathname === item.href
-                  ? "text-green-400"
-                  : "text-white"
-              }`}
-            >
-              <div className="text-xl">
-                {item.icon}
-              </div>
-
-              <span className="text-[10px] leading-none text-center">
-                {item.name}
-              </span>
-            </Link>
-          );
-        })}
-
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // =========================
   // 💻 DESKTOP SIDEBAR
   // =========================
   return (
-    <div className={`relative z-10 transition-all duration-100 shrink-0 ${
-      isSidebarOpen ? "w-64" : "w-20"
-    }`}>
+    <div className={`relative z-10 transition-all duration-100 shrink-0 ${isSidebarOpen ? "w-64" : "w-20"
+      }`}>
 
       <div className="h-full bg-white shadow-lg text-black p-4 flex flex-col">
 
@@ -116,9 +123,8 @@ if (mobile) {
           {DashboardMenu1.map((item) => (
             <Link key={item.name} href={item.href}>
               <div
-                className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${
-                  pathname === item.href ? "bg-green-200" : ""
-                }`}
+                className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${pathname === item.href ? "bg-green-200" : ""
+                  }`}
               >
                 <div className="min-w-5">{item.icon}</div>
 
@@ -135,9 +141,8 @@ if (mobile) {
           {DashboardMenu2.map((item) => (
             <Link key={item.name} href={item.href}>
               <div
-                className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${
-                  pathname === item.href ? "bg-green-200" : ""
-                }`}
+                className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${pathname === item.href ? "bg-green-200" : ""
+                  }`}
               >
                 <div className="min-w-5">{item.icon}</div>
 
@@ -178,9 +183,8 @@ if (mobile) {
             return (
               <Link key={item.name} href={item.href}>
                 <div
-                  className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${
-                    pathname === item.href ? "bg-green-200" : ""
-                  }`}
+                  className={`flex items-center p-3 rounded-lg hover:bg-green-200 transition ${pathname === item.href ? "bg-green-200" : ""
+                    }`}
                 >
                   <div className="min-w-5">{item.icon}</div>
 
