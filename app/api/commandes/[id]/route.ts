@@ -66,11 +66,11 @@ export async function GET(
 
     // 📦 produits
     const produits = rows
-      .filter((r: any) => r.produit_id && r.produit_nom)
+      .filter((r: any) => r.produit_id !== null)
       .map((r: any) => ({
-        nom: r.produit_nom,
+        nom: r.produit_nom ?? "Produit inconnu",
         quantite: Number(r.quantite || 0),
-        prix_unitaire: Number(r.prix_unitaire || 0),
+        prix_unitaire: Number(r.prix_unitaire || r.produit_prix || 0),
       }));
 
     return NextResponse.json({
