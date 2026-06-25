@@ -16,36 +16,32 @@ export async function GET(
       return NextResponse.json({ message: "ID invalide !" }, { status: 400 });
     }
 
-    const [rows]: any = await db.query(
-      `
-      SELECT
-      c.id AS commande_id,
-      c.reference,
-      c.total,
-      c.mode_commande,
-      c.status,
-      c.created_at,
+const [rows]: any = await db.query(`
+  SELECT
+    c.id AS commande_id,
+    c.reference,
+    c.total,
+    c.mode_commande,
+    c.status,
+    c.created_at,
 
-      u.id AS user_id,
-      u.nom AS user_nom,
-      u.prenom,
-      u.telephone,
+    u.id AS user_id,
+    u.nom AS user_nom,
+    u.prenom,
+    u.telephone,
 
-      p.id AS produit_id,
-      p.nom AS produit_nom,
-      p.prix AS produit_prix,
+    ci.quantite,
+    ci.prix_unitaire,
 
-      ci.quantite,
-      ci.prix_unitaire
+    p.id AS produit_id,
+    p.nom AS produit_nom
 
-      FROM commandes c
-      JOIN users u ON c.user_id = u.id
-      LEFT JOIN commande_items ci ON c.id = ci.commande_id
-      LEFT JOIN produits p ON ci.produit_id = p.id
-      WHERE c.id = ?
-      `,
-      [commandeId]
-    );
+  FROM commandes c
+  JOIN users u ON c.user_id = u.id
+  LEFT JOIN commande_items ci ON c.id = ci.commande_id
+  LEFT JOIN produits p ON ci.produit_id = p.id
+  WHERE c.id = ?
+`, [commandeId]);
 
     if (!rows || rows.length === 0) {
       return NextResponse.json({ message: "Commande introuvable" }, { status: 404 });
@@ -69,13 +65,13 @@ export async function GET(
     };
 
     // 📦 produits
-    const produits = rows
-    .filter((r: any) => r.produit_id !== null)
-    .map((r: any) => ({
-      nom: r.produit_nom,
-      quantite: r.quantite,
-      prix_unitaire: r.prix_unitaire ?? r.produit_prix,
-    }));
+const produits = rows
+  .filter((r: any) => r.produit_id && r.produit_nom)
+  .map((r: any) => ({
+    nom: r.produit_nom,
+    quantite: r.quantite ?? 0,
+    prix_unitaire: r.prix_unitaire ?? 0,
+  }));
 
     return NextResponse.json({
       commande,
