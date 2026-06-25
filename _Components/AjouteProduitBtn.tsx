@@ -82,7 +82,9 @@ const AjouteProduitBtn = () => {
     const reset = () => {
         setNom("");
         setDescription("");
-
+        setPrix(undefined);
+        setStock(undefined);
+        setSection("");
         setImageUrl("");
         setCategory_id("");
     };
@@ -251,8 +253,9 @@ const AjouteProduitBtn = () => {
                                 onChange={(e) => setSection(e.target.value)}
                                 className="border p-2 rounded"
                             >
-                                <option value="commande">Populaire</option>
-                                <option value="livraison">Meilleur Offre</option>
+                                <option value="">Choisir une section</option>
+                                <option value="populaire">Populaire</option>
+                                <option value="meilleur offre">Meilleur Offre</option>
                             </select>
 
                             {/* ACTION */}

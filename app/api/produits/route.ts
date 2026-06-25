@@ -41,8 +41,7 @@ export async function POST(req: Request) {
 
     if (
       section !== "populaire" &&
-      section !== "meilleur offre" &&
-      section !== "autre"
+      section !== "meilleur offre"
     ) {
       return NextResponse.json(
         { message: "Mode commande invalide" },
@@ -89,12 +88,16 @@ export async function GET() {
       { status: 200 }
     );
 
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+  console.error("ERREUR SQL =", error);
 
-    return NextResponse.json(
-      { message: (error as Error).message },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    {
+      message: error.message,
+      code: error.code,
+      errno: error.errno,
+    },
+    { status: 500 }
+  );
+}
 }
