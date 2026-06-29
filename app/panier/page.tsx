@@ -9,7 +9,7 @@ import {
     removeFromCart,
 } from "../../lib/cart";
 
-import { ArrowLeft, ArrowUpLeft, Trash, X } from "lucide-react";
+import { ArrowUpLeft, Trash, X } from "lucide-react";
 import { FaBoxOpen, FaTruck } from "react-icons/fa";
 import FormulaireLivre from "../../_Components/FormulaireLivre";
 import { useRouter } from "next/navigation";
@@ -50,32 +50,6 @@ export default function PanierPage() {
         };
     }, []);
 
-    /* ANIMATION */
-    useEffect(() => {
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-
-                entries.forEach((entry) => {
-
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('show');
-                    }
-
-                });
-
-            },
-            { threshold: 0.3 }
-        );
-
-        const elements = document.querySelectorAll('.fade-item');
-
-        elements.forEach((el) => observer.observe(el));
-
-        return () => observer.disconnect();
-
-    }, [cart]);
-
     const handleRemove = (id: number) => {
         removeFromCart(id);
         setCart((prev) => prev.filter((item) => item.id !== id));
@@ -86,35 +60,24 @@ export default function PanierPage() {
     }, [cart]);
 
     return (
-        <div className="fade-item max-w-7xl mx-auto p-3 sm:p-5">
+        <div className="max-w-7xl mx-auto p-3 sm:p-5">
             <div className="flex flex-col space-y-6">
                 {/* RETOUR */}
-                <div className="flex gap-4 items-center mb-5">
-                    <div>
-                        <button
-                            onClick={() => route.back()}
-                            className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
-                        >
-                            <ArrowLeft size={18} />
-
-                        </button>
-                    </div>
-
-                    <div>
-
-                        {/* TITRE */}
-                        <h1 className="text-2xl sm:text-3xl font-bold ">
-                            Mon panier
-                        </h1>
-                    </div>
-
-                </div>
-
+                <button
+                    onClick={() => route.back()}
+                    className="flex items-center gap-2 text-white bg-green-600 hover:bg-green-700 w-fit px-4 py-2 rounded transition"
+                >
+                    <ArrowUpLeft size={18} />
+                    Retour
+                </button>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+                    Mon panier
+                </h1>
             </div>
 
 
             {cart.length === 0 ? (
-                <p className="text-center text-gray-500 mt-6">
+                <p className="text-center text-gray-500">
                     Votre panier est vide
                 </p>
             ) : (
@@ -122,7 +85,7 @@ export default function PanierPage() {
                     {cart.map((item) => (
                         <div
                             key={item.id}
-                            className=" fade-item flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b p-3 rounded"
+                            className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b p-3 rounded"
                         >
                             <Image
                                 src={item.image_url || "/placeholder.png"}

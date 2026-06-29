@@ -56,8 +56,8 @@ export async function POST(req: Request) {
                 prenom,
                 email,
                 telephone,
-                image_url,
-                hashedPassword
+                hashedPassword,
+                image_url
             ]
         );
 

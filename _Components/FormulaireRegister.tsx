@@ -199,6 +199,13 @@ const FormulaireRegister = ({
         placeholder="Mot de passe"
         className="border p-2 rounded-lg w-full"
       />
+      <input
+        type="password"
+        value={image_url}
+        onChange={(e) => setImage_url(e.target.value)}
+        placeholder="Mot de passe"
+        className="border p-2 rounded-lg w-full"
+      />
 
       {/* SUBMIT */}
       <button
@@ -209,8 +216,8 @@ const FormulaireRegister = ({
         {uploading
           ? "Téléchargement..."
           : isLoading
-          ? "Enregistrement..."
-          : "Créer mon compte"}
+            ? "Enregistrement..."
+            : "Créer mon compte"}
       </button>
 
       {/* LOGIN */}
