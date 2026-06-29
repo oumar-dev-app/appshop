@@ -15,13 +15,6 @@ function Header() {
             try {
                 const token = localStorage.getItem("token");
 
-                if (!token) {
-                    setUser(null);
-                    setLoading(false);
-                    router.push("/login");
-                    return;
-                }
-
                 const res = await fetch("/api/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,

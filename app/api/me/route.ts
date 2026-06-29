@@ -4,16 +4,13 @@ import jwt from "jsonwebtoken";
 
 export async function GET(req: Request) {
     try {
-        const authHeader = req.headers.get("authorization");
+        const auth = req.headers.get("authorization");
 
-        if (!authHeader) {
-            return NextResponse.json(
-                { message: "Token manquant" },
-                { status: 401 }
-            );
+        if (!auth) {
+            return NextResponse.json({ message: "No token" }, { status: 401 });
         }
 
-        const token = authHeader.split(" ")[1];
+        const token = auth.split(" ")[1];
 
         const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
@@ -23,10 +20,7 @@ export async function GET(req: Request) {
         );
 
         if (!rows.length) {
-            return NextResponse.json(
-                { message: "Utilisateur introuvable" },
-                { status: 404 }
-            );
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
         return NextResponse.json({
@@ -35,7 +29,7 @@ export async function GET(req: Request) {
 
     } catch (error) {
         return NextResponse.json(
-            { message: "Token invalide" },
+            { message: "Invalid token" },
             { status: 401 }
         );
     }
