@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         await db.query(
             `INSERT INTO users 
             (nom, prenom, email, telephone, password, image_url) 
-            VALUES (?, ?, ?, ?, ?, image_url)`,
+            VALUES (?, ?, ?, ?, ?, ?)`,
             [
                 nom,
                 prenom,
