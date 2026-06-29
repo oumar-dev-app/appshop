@@ -152,7 +152,6 @@ const AjouteProduitBtn = () => {
             </button>
 
             {/* MODAL */}
-            {/* MODAL */}
             {modal && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
 
@@ -166,7 +165,6 @@ const AjouteProduitBtn = () => {
 
                         {/* CONTENT */}
                         <div className="relative bg-white text-black w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded shadow-lg m-3">
-
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold">
                                     Ajouter un produit
