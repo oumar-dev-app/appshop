@@ -29,44 +29,59 @@ export default function FormulaireLivre({
   // =========================
   const getLocation = () => {
     if (!navigator.geolocation) {
-      toast.error(
-        "La géolocalisation n'est pas supportée par cet appareil."
-      );
+      toast.error("Votre navigateur ne supporte pas la géolocalisation.");
       return;
     }
 
-    const loading = toast.loading(
-      "Récupération de votre position..."
-    );
+    const loading = toast.loading("Récupération de votre position...");
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
+      (position) => {
+        toast.dismiss(loading);
+
+        const { latitude, longitude } = position.coords;
 
         setLocation(
           `https://maps.google.com/?q=${latitude},${longitude}`
         );
 
-        toast.dismiss(loading);
-        toast.success("Localisation récupérée.");
+        toast.success("Localisation récupérée avec succès.");
       },
       (error) => {
-        console.error(error);
-
         toast.dismiss(loading);
 
-        toast.error(
-          "Veuillez autoriser l'accès à votre localisation."
-        );
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            toast.error(
+              "Vous avez refusé l'accès à votre localisation. Autorisez-la dans les paramètres du navigateur."
+            );
+            break;
+
+          case error.POSITION_UNAVAILABLE:
+            toast.error(
+              "Votre position est actuellement indisponible. Vérifiez que le GPS est activé."
+            );
+            break;
+
+          case error.TIMEOUT:
+            toast.error(
+              "Le délai de récupération de la position est dépassé. Réessayez."
+            );
+            break;
+
+          default:
+            toast.error(error.message);
+        }
+
+        console.error(error);
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 20000,
         maximumAge: 0,
       }
     );
   };
-
   // =========================
   // 🛒 Submit
   // =========================
@@ -127,7 +142,7 @@ export default function FormulaireLivre({
       if (!res.ok) {
         toast.error(
           result.message ||
-            "Erreur lors de la commande"
+          "Erreur lors de la commande"
         );
         return;
       }
