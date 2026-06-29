@@ -10,7 +10,8 @@ export async function POST(req: Request) {
             prenom,
             email,
             telephone,
-            password
+            password,
+            image_url
         } = await req.json();
 
         // Vérification des champs obligatoires
@@ -48,13 +49,14 @@ export async function POST(req: Request) {
         // Insertion utilisateur
         await db.query(
             `INSERT INTO users 
-            (nom, prenom, email, telephone, password) 
-            VALUES (?, ?, ?, ?, ?)`,
+            (nom, prenom, email, telephone, password, image_url) 
+            VALUES (?, ?, ?, ?, ?, image_url)`,
             [
                 nom,
                 prenom,
                 email,
                 telephone,
+                image_url,
                 hashedPassword
             ]
         );

@@ -8,6 +8,7 @@ type User = {
     prenom: string;
     telephone: string;
     email: string;
+    role:string
 };
 
 type ModifierProfilProps = {

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import BoutiqueReglage from "../../../_Components/BoutiqueReglage";
 import ChangerPassword from "../../../_Components/ChangerPassword";
 import ModifierProfil from "../../../_Components/ModifierProfil";
@@ -10,6 +10,7 @@ type User = {
     prenom: string;
     email: string;
     telephone: string;
+    role:string
 }
 
 export default function PersonnalisationPage() {
