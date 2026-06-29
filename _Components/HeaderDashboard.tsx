@@ -23,18 +23,10 @@ function Header() {
 
                 const data = await res.json();
 
-                // 🔐 CHECK ADMIN
-                if (data.user.role !== "admin") {
-                    router.push("/");
-                    return;
-                }
-
                 setUser(data.user);
 
             } catch (err) {
                 console.error(err);
-                setUser(null);
-                router.push("/login");
             } finally {
                 setLoading(false);
             }
