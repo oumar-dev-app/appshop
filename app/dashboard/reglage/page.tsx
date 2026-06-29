@@ -44,16 +44,15 @@ export default function PersonnalisationPage() {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("token");
-
-                const res = await fetch("/api/users", {
-                    method: 'GET',
+                const res = await fetch("/api/me", {
+                    method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
                 const data = await res.json();
-                setUser(data.data?.[0] || null);
+                setUser(data.user);
             } catch (error) {
                 console.error(error);
             }

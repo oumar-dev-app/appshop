@@ -1,63 +1,42 @@
-import { db } from "../../../lib/db";
 import { NextResponse } from "next/server";
+import { db } from "../../../lib/db";
 import jwt from "jsonwebtoken";
 
 export async function GET(req: Request) {
     try {
         const authHeader = req.headers.get("authorization");
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (!authHeader) {
             return NextResponse.json(
-                { user: null, authenticated: false },
+                { message: "Token manquant" },
                 { status: 401 }
             );
         }
 
         const token = authHeader.split(" ")[1];
 
-        if (!token) {
-            return NextResponse.json(
-                { user: null, authenticated: false },
-                { status: 401 }
-            );
-        }
-
-        let decoded: any;
-
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET!);
-        } catch (error) {
-            return NextResponse.json(
-                { user: null, authenticated: false, message: "Token invalide" },
-                { status: 401 }
-            );
-        }
+        const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
         const [rows]: any = await db.query(
-            `SELECT id, nom, prenom, email, role, image_url 
-             FROM users 
-             WHERE id = ?`,
+            "SELECT id, nom, prenom, email, telephone, role, image_url FROM users WHERE id = ?",
             [decoded.id]
         );
 
         if (!rows.length) {
             return NextResponse.json(
-                { user: null, authenticated: false },
+                { message: "Utilisateur introuvable" },
                 { status: 404 }
             );
         }
 
         return NextResponse.json({
-            user: rows[0],
-            authenticated: true,
+            user: rows[0]
         });
 
-    } catch (err) {
-        console.error(err);
-
+    } catch (error) {
         return NextResponse.json(
-            { user: null, authenticated: false },
-            { status: 500 }
+            { message: "Token invalide" },
+            { status: 401 }
         );
     }
 }
