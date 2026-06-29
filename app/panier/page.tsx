@@ -50,31 +50,31 @@ export default function PanierPage() {
         };
     }, []);
 
-      /* ANIMATION */
-      useEffect(() => {
-    
+    /* ANIMATION */
+    useEffect(() => {
+
         const observer = new IntersectionObserver(
-          (entries) => {
-    
-            entries.forEach((entry) => {
-    
-              if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-              }
-    
-            });
-    
-          },
-          { threshold: 0.3 }
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+
+                });
+
+            },
+            { threshold: 0.3 }
         );
-    
+
         const elements = document.querySelectorAll('.fade-item');
-    
+
         elements.forEach((el) => observer.observe(el));
-    
+
         return () => observer.disconnect();
-    
-      }, [cart]);
+
+    }, [cart]);
 
     const handleRemove = (id: number) => {
         removeFromCart(id);
