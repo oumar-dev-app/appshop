@@ -69,7 +69,7 @@ const Slider = () => {
           />
 
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-black/65" />
 
           {/* Content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
