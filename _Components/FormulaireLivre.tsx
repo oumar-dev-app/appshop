@@ -26,22 +26,49 @@ export default function FormulaireLivre({
   // =========================
   // 📍 GPS
   // =========================
-  const getLocation = () => {
+const getLocation = () => {
+  if (!navigator.geolocation) {
+    alert("Géolocalisation non supportée");
+    return;
+  }
 
-    if (!navigator.geolocation) {
-      alert("Géolocalisation non supportée");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition((pos) => {
-
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
       const { latitude, longitude } = pos.coords;
 
       setLocation(
         `https://maps.google.com/?q=${latitude},${longitude}`
       );
-    });
-  };
+    },
+
+    (error) => {
+      console.log("GPS ERROR:", error);
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Autorisez la localisation dans votre navigateur");
+          break;
+
+        case error.POSITION_UNAVAILABLE:
+          alert("Position indisponible");
+          break;
+
+        case error.TIMEOUT:
+          alert("Délai dépassé, réessayez");
+          break;
+
+        default:
+          alert("Erreur GPS inconnue");
+      }
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    }
+  );
+};
 
   // =========================
   // 🛒 Submit

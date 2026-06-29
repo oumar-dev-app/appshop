@@ -46,15 +46,13 @@ const FormulaireRegister = ({
       setImage_url(data.imageUrl);
       toast.success('Image téléchargée avec succès');
     } catch (error: any) {
-      toast.error(error.message || "Erreur lors de l'upload");
+      toast.error(error.message || "Erreur upload");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (
@@ -68,8 +66,12 @@ const FormulaireRegister = ({
       return;
     }
 
-    setIsLoading(true);
+    if (!email.includes('@')) {
+      toast.error('Email invalide');
+      return;
+    }
 
+    setIsLoading(true);
     const loading = toast.loading('Création du compte...');
 
     try {
@@ -91,15 +93,12 @@ const FormulaireRegister = ({
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message);
+        throw new Error(data.message || 'Erreur inscription');
       }
 
-      toast.dismiss(loading);
-      toast.success(data.message);
+      toast.success(data.message || 'Compte créé');
 
-      if (onSuccess) {
-        onSuccess();
-      }
+      onSuccess?.();
 
       setNom('');
       setPrenom('');
@@ -110,53 +109,47 @@ const FormulaireRegister = ({
 
       router.push('/');
     } catch (error: any) {
-      toast.dismiss(loading);
-
-      toast.error(
-        error.message || "Erreur lors de l'inscription"
-      );
+      toast.error(error.message || "Erreur inscription");
     } finally {
+      toast.dismiss(loading);
       setIsLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 w-full"
-    >
-      {/* APERÇU IMAGE */}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+
+      {/* IMAGE PREVIEW */}
       {image_url && (
         <div className="flex justify-center">
           <img
             src={image_url}
-            alt="Photo de profil"
-            className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+            alt="profil"
+            className="w-24 h-24 rounded-full object-cover border"
           />
         </div>
       )}
 
-      {/* UPLOAD */}
+      {/* UPLOAD IMAGE */}
       <input
         type="file"
         accept="image/*"
+        disabled={uploading}
         onChange={async (e) => {
           const file = e.target.files?.[0];
-          if (!file) return;
-
-          await uploadImage(file);
+          if (file) await uploadImage(file);
         }}
-        className="border p-2 rounded-lg w-full"
+        className="border p-2 rounded-lg"
       />
 
       {uploading && (
         <p className="text-sm text-blue-600">
-          Téléchargement de l'image...
+          Upload en cours...
         </p>
       )}
 
       {/* NOM / PRENOM */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex gap-3">
         <input
           value={nom}
           onChange={(e) => setNom(e.target.value)}
@@ -172,8 +165,8 @@ const FormulaireRegister = ({
         />
       </div>
 
-      {/* EMAIL / TELEPHONE */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* EMAIL / TEL */}
+      <div className="flex gap-3">
         <input
           type="email"
           value={email}
@@ -199,25 +192,18 @@ const FormulaireRegister = ({
         placeholder="Mot de passe"
         className="border p-2 rounded-lg w-full"
       />
-      <input
-        type="text"
-        value={image_url}
-        onChange={(e) => setImage_url(e.target.value)}
-        placeholder="Mot de passe"
-        className="border p-2 rounded-lg w-full"
-      />
 
       {/* SUBMIT */}
       <button
         type="submit"
         disabled={isLoading || uploading}
-        className="bg-black text-white p-3 rounded-lg w-full disabled:opacity-50"
+        className="bg-black text-white p-3 rounded-lg disabled:opacity-50"
       >
         {uploading
-          ? "Téléchargement..."
+          ? 'Upload...'
           : isLoading
-            ? "Enregistrement..."
-            : "Créer mon compte"}
+            ? 'Création...'
+            : 'Créer mon compte'}
       </button>
 
       {/* LOGIN */}
@@ -228,6 +214,7 @@ const FormulaireRegister = ({
       >
         J'ai déjà un compte
       </button>
+
     </form>
   );
 };
