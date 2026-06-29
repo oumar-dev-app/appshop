@@ -65,7 +65,7 @@ const Slider = () => {
             alt={slide.title || 'slider image'}
             fill
             priority
-            className="h-50 object-cover w-full rounded-t-lg"
+            className="h-45 object-cover w-full rounded-t-lg"
           />
 
           {/* Overlay */}
