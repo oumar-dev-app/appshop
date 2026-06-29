@@ -10,7 +10,7 @@ type User = {
     prenom: string;
     email: string;
     telephone: string;
-    role:string
+    role: string
 }
 
 export default function PersonnalisationPage() {
@@ -40,40 +40,40 @@ export default function PersonnalisationPage() {
         };
     }, []);
 
-useEffect(() => {
-    const fetchUser = async () => {
-        try {
-            const token = localStorage.getItem("token");
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
 
-            if (!token) {
+                if (!token) {
+                    setUser(null);
+                    return;
+                }
+
+                const res = await fetch("/api/me", {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.user) {
+                    setUser(null);
+                    return;
+                }
+
+                setUser(data.user);
+
+            } catch (error) {
+                console.error(error);
                 setUser(null);
-                return;
             }
+        };
 
-            const res = await fetch("/api/me", {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const data = await res.json();
-
-            if (!res.ok || !data.user) {
-                setUser(null);
-                return;
-            }
-
-            setUser(data.user);
-
-        } catch (error) {
-            console.error(error);
-            setUser(null);
-        }
-    };
-
-    fetchUser();
-}, []);
+        fetchUser();
+    }, []);
     return (
         <div className='fade-item mx-4 sm:mx-6 lg:mx-8 mt-5'>
             <div className='text-black'>
