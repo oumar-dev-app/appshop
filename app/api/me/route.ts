@@ -1,36 +1,63 @@
-import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
+import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 export async function GET(req: Request) {
     try {
-        const auth = req.headers.get("authorization");
+        const authHeader = req.headers.get("authorization");
 
-        if (!auth) {
-            return NextResponse.json({ message: "No token" }, { status: 401 });
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return NextResponse.json(
+                { user: null, authenticated: false },
+                { status: 401 }
+            );
         }
 
-        const token = auth.split(" ")[1];
+        const token = authHeader.split(" ")[1];
 
-        const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+        if (!token) {
+            return NextResponse.json(
+                { user: null, authenticated: false },
+                { status: 401 }
+            );
+        }
+
+        let decoded: any;
+
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        } catch (error) {
+            return NextResponse.json(
+                { user: null, authenticated: false, message: "Token invalide" },
+                { status: 401 }
+            );
+        }
 
         const [rows]: any = await db.query(
-            "SELECT id, nom, prenom, email, telephone, role, image_url FROM users WHERE id = ?",
+            `SELECT id, nom, prenom, email, role, image_url 
+             FROM users 
+             WHERE id = ?`,
             [decoded.id]
         );
 
         if (!rows.length) {
-            return NextResponse.json({ message: "User not found" }, { status: 404 });
+            return NextResponse.json(
+                { user: null, authenticated: false },
+                { status: 404 }
+            );
         }
 
         return NextResponse.json({
-            user: rows[0]
+            user: rows[0],
+            authenticated: true,
         });
 
-    } catch (error) {
+    } catch (err) {
+        console.error(err);
+
         return NextResponse.json(
-            { message: "Invalid token" },
-            { status: 401 }
+            { user: null, authenticated: false },
+            { status: 500 }
         );
     }
 }

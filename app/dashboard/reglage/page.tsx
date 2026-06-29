@@ -49,14 +49,12 @@ export default function PersonnalisationPage() {
                     setUser(null);
                     return;
                 }
-
                 const res = await fetch("/api/me", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
                 const data = await res.json();
 
                 if (!res.ok || !data.user) {

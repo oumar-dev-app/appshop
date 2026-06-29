@@ -20,9 +20,7 @@ function Header() {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
                 const data = await res.json();
-
                 setUser(data.user);
 
             } catch (err) {
