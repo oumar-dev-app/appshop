@@ -23,13 +23,6 @@ function Header() {
 
                 const data = await res.json();
 
-                if (!res.ok || !data.user) {
-                    localStorage.removeItem("token");
-                    setUser(null);
-                    router.push("/login");
-                    return;
-                }
-
                 // 🔐 CHECK ADMIN
                 if (data.user.role !== "admin") {
                     router.push("/");
