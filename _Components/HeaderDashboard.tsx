@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Header() {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -16,6 +18,7 @@ function Header() {
                 if (!token) {
                     setUser(null);
                     setLoading(false);
+                    router.push("/login");
                     return;
                 }
 
@@ -27,38 +30,42 @@ function Header() {
 
                 const data = await res.json();
 
-                setUser(data.user || null);
+                if (!res.ok || !data.user) {
+                    localStorage.removeItem("token");
+                    setUser(null);
+                    router.push("/login");
+                    return;
+                }
+
+                // 🔐 CHECK ADMIN
+                if (data.user.role !== "admin") {
+                    router.push("/");
+                    return;
+                }
+
+                setUser(data.user);
 
             } catch (err) {
                 console.error(err);
                 setUser(null);
+                router.push("/login");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchUser();
-    }, []);
+    }, [router]);
 
-    // =========================
-    // 🧠 SAFE NAME FORMAT
-    // =========================
     const getUserName = () => {
         if (!user) return "Admin";
 
-        const prenom = user?.prenom || "";
-        const nom = user?.nom || "";
-
-        if (!prenom && !nom && user?.name) {
-            return user.name;
-        }
-
-        return `${prenom} ${nom}`.trim() || "Utilisateur";
+        return `${user?.prenom || ""} ${user?.nom || ""}`.trim() || "Utilisateur";
     };
 
     return (
         <header className="mx-4 sm:mx-6 lg:mx-8">
-            <div className="max-w-7xl m-auto border border-white bg-white text-black rounded-lg shadow-lg mt-4 mb-2 py-4 px-4 sm:px-6 flex items-center justify-between">
+            <div className="max-w-7xl m-auto border bg-white text-black rounded-lg shadow-lg mt-4 mb-2 py-4 px-4 sm:px-6 flex items-center justify-between">
 
                 <h1 className="text-lg sm:text-2xl font-semibold">
                     Dashboard
@@ -70,7 +77,6 @@ function Header() {
                         href="/dashboard/reglage"
                         className="flex items-center space-x-3"
                     >
-
                         <Image
                             src={user?.image_url || "/oumar.png"}
                             alt="user"
@@ -78,7 +84,8 @@ function Header() {
                             height={40}
                             className="rounded-full object-cover"
                         />
-                        <span className="hidden sm:block text-black font-medium">
+
+                        <span className="hidden sm:block font-medium">
                             {loading ? "Chargement..." : getUserName()}
                         </span>
 

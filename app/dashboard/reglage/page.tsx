@@ -40,26 +40,40 @@ export default function PersonnalisationPage() {
         };
     }, []);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const res = await fetch("/api/me", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+useEffect(() => {
+    const fetchUser = async () => {
+        try {
+            const token = localStorage.getItem("token");
 
-                const data = await res.json();
-                setUser(data.user);
-            } catch (error) {
-                console.error(error);
+            if (!token) {
+                setUser(null);
+                return;
             }
-        }
-        fetchUser();
-    }, []);
 
+            const res = await fetch("/api/me", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.user) {
+                setUser(null);
+                return;
+            }
+
+            setUser(data.user);
+
+        } catch (error) {
+            console.error(error);
+            setUser(null);
+        }
+    };
+
+    fetchUser();
+}, []);
     return (
         <div className='fade-item mx-4 sm:mx-6 lg:mx-8 mt-5'>
             <div className='text-black'>
