@@ -4,7 +4,7 @@ import { useState } from "react";
 import { MapPin } from "lucide-react";
 import { toast } from "sonner";
 
-import { CartItem } from "@/lib/cart";
+import { CartItem } from "../lib/cart";
 
 type Props = {
   type: "commander" | "livre";

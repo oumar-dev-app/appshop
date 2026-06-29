@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Heart } from 'lucide-react';
 import { FaStar } from 'react-icons/fa';
 import Link from 'next/link';
-import HeartBtn from '@/_Components/HeartBtn'
+import HeartBtn from '../_Components/HeartBtn'
 
 type Produits = {
   id: number;
