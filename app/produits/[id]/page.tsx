@@ -1,12 +1,12 @@
 "use client";
-
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowUpLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 type Produits = {
     id: number;
@@ -115,6 +115,32 @@ export default function ConsulterProduit() {
 
     }, [id]);
 
+    /* ANIMATION */
+    useEffect(() => {
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+
+                });
+
+            },
+            { threshold: 0.3 }
+        );
+
+        const elements = document.querySelectorAll('.fade-item');
+
+        elements.forEach((el) => observer.observe(el));
+
+        return () => observer.disconnect();
+
+    }, [product]);
+
     if (loading)
         return (
             <p className="text-center flex justify-center items-center h-screen animate-pulse">
@@ -132,154 +158,185 @@ export default function ConsulterProduit() {
     return (
         <div className="flex flex-col space-y-5 mt-5">
 
-            {/* HEADER STYLE CATÉGORIE */}
-            {/* HEADER */}
-            <div className="w-full max-w-7xl mx-auto px-5 mt-5 mb-6 space-y-4">
 
-                {/* BOUTON RETOUR */}
-                <button
-                    onClick={() => route.back()}
-                    className="flex items-center gap-2 text-white bg-green-600 hover:bg-green-700 w-fit px-4 py-2 rounded"
-                >
-                    <ArrowUpLeft size={18} />
-                    Retour
-                </button>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
 
-                {/* TITRE */}
-                <h1 className="text-2xl font-bold text-black">
-                    Détails du produit
-                </h1>
+                {/* HEADER STYLE CATÉGORIE */}
+                {/* HEADER */}
+                <div className="w-full max-w-7xl mx-auto px-5  mb-6 space-y-4">
 
-            </div>
+                    {/* BOUTON RETOUR */}
+                    <div className=" flex gap-4 items-center">
+                        <div>
+                            <button
+                                onClick={() => route.back()}
+                                className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
+                            >
+                                <ArrowLeft size={18} />
 
-            {/* CONTENT */}
-            <div className="max-w-7xl mx-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            </button>
+                        </div>
 
-                {/* IMAGE */}
-                <div className="flex justify-center">
-                    <Image
-                        src={product.image_url || "/placeholder.png"}
-                        alt={product.nom}
-                        width={400}
-                        height={400}
-                        className="rounded border"
-                    />
+                        <div>
+
+                            {/* TITRE */}
+                            <h1 className="text-2xl font-bold text-black">
+                                Détails du produit
+                            </h1>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
+
+                {/* CONTENT */}
+                <div className="max-w-7xl mx-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    {/* IMAGE */}
+                    <div className="flex justify-center">
+                        <Image
+                            src={product.image_url || "/placeholder.png"}
+                            alt={product.nom}
+                            width={400}
+                            height={400}
+                            className="rounded border"
+                        />
+                    </div>
+
+                    {/* INFOS */}
+                    <div className="p-5 space-y-5">
+
+                        <h2 className="text-2xl font-bold">
+                            {product.nom}
+                        </h2>
+
+                        <p className="text-gray-600">
+                            {product.description}
+                        </p>
+
+                        <p className="text-green-600 font-bold">
+                            Prix : {formatFCFA(product.prix)}
+                        </p>
+
+                        <p>
+                            Stock : {product.stock}
+                        </p>
+
+                        {/* LIKES */}
+                        <div className="flex items-center gap-2">
+                            <span>❤️</span>
+                            <p className="text-sm text-gray-600">
+                                {likes} j'aime
+                            </p>
+                        </div>
+
+                        {/* QUANTITÉ */}
+                        <div className="flex items-center gap-3">
+
+                            <button
+                                onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                className="px-3 py-1 border rounded"
+                            >
+                                -
+                            </button>
+
+                            <span>{quantity}</span>
+
+                            <button
+                                onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                                className="px-3 py-1 border rounded"
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+                        {/* PANIER */}
+                        <button
+                            onClick={handleAddToCart}
+                            className="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded w-full transition"
+                        >
+                            Ajouter au panier ({quantity})
+                        </button>
+
+                    </div>
                 </div>
 
-                {/* INFOS */}
-                <div className="p-5 space-y-5">
+            </motion.div>
 
-                    <h2 className="text-2xl font-bold">
-                        {product.nom}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
+                {/* PRODUITS SIMILAIRES */}
+                <div className="max-w-7xl mx-auto px-5 mt-10 space-y-6">
+
+                    <h2 className="text-xl font-bold">
+                        Produits similaires
                     </h2>
 
-                    <p className="text-gray-600">
-                        {product.description}
-                    </p>
-
-                    <p className="text-green-600 font-bold">
-                        Prix : {formatFCFA(product.prix)}
-                    </p>
-
-                    <p>
-                        Stock : {product.stock}
-                    </p>
-
-                    {/* LIKES */}
-                    <div className="flex items-center gap-2">
-                        <span>❤️</span>
-                        <p className="text-sm text-gray-600">
-                            {likes} j'aime
+                    {relatedProducts?.length === 0 ? (
+                        <p className="text-gray-500">
+                            Aucun produit similaire
                         </p>
-                    </div>
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-5">
 
-                    {/* QUANTITÉ */}
-                    <div className="flex items-center gap-3">
+                            {relatedProducts.map((p) => (
 
-                        <button
-                            onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                            className="px-3 py-1 border rounded"
-                        >
-                            -
-                        </button>
-
-                        <span>{quantity}</span>
-
-                        <button
-                            onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                            className="px-3 py-1 border rounded"
-                        >
-                            +
-                        </button>
-
-                    </div>
-
-                    {/* PANIER */}
-                    <button
-                        onClick={handleAddToCart}
-                        className="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded w-full transition"
-                    >
-                        Ajouter au panier ({quantity})
-                    </button>
-
-                </div>
-            </div>
-
-            {/* PRODUITS SIMILAIRES */}
-            <div className="max-w-5xl mx-auto px-5 mt-10 space-y-6">
-
-                <h2 className="text-xl font-bold">
-                    Produits similaires
-                </h2>
-
-                {relatedProducts?.length === 0 ? (
-                    <p className="text-gray-500">
-                        Aucun produit similaire
-                    </p>
-                ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-                        {relatedProducts.map((p) => (
-
-                            <div
-                                key={p.id}
-                                className="rounded overflow-hidden bg-white shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-1"
-                            >
-                                <Link
-                                    href={`/produits/${p.id}`}
+                                <div
+                                    key={p.id}
+                                    className="rounded overflow-hidden bg-white shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-1"
                                 >
-                                    {/* IMAGE */}
-                                    <div className="relative w-full h-52 overflow-hidden">
+                                    <Link
+                                        href={`/produits/${p.id}`}
+                                    >
+                                        {/* IMAGE */}
+                                        <div className="relative w-full h-32 overflow-hidden">
 
-                                        <Image
-                                            src={p.image_url || "/placeholder.png"}
-                                            alt={p.nom}
-                                            fill
-                                            className="object-cover hover:scale-110 transition duration-500"
-                                        />
+                                            <Image
+                                                src={p.image_url || "/placeholder.png"}
+                                                alt={p.nom}
+                                                fill
+                                                className="object-cover hover:scale-110 transition duration-500"
+                                            />
 
-                                    </div>
-
-                                    {/* FOOTER */}
-                                    <div className="p-4 flex justify-between items-center">
-
-                                        <h3 className="font-semibold text-lg truncate">
-                                            {p.nom}
-                                        </h3>
-
-                                        <div className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition"
-                                        >
-                                            <ArrowUpRight size={20} />
                                         </div>
-                                    </div>
-                                </Link>
-                            </div>
 
-                        ))}
+                                        {/* FOOTER */}
+                                        <div className="p-2 flex justify-between items-center">
 
-                    </div>
-                )}
-            </div>
+                                            <h3 className="font-bold text-sm truncate">
+                                                {p.nom}
+                                            </h3>
+
+                                            <div className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition"
+                                            >
+                                                <ArrowUpRight size={16} />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </div>
+
+                            ))}
+
+                        </div>
+                    )}
+                </div>
+            </motion.div>
 
         </div>
     );

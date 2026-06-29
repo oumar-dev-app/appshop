@@ -41,11 +41,6 @@ const ProduitCard = React.memo(({ p }: { p: Produits }) => {
         {/* IMAGE */}
         <div className="relative w-full h-44 bg-gray-100">
 
-          {p.isNew && (
-            <span className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
-              Nouveau
-            </span>
-          )}
           <Image
             src={
               p.image_url?.startsWith("http")
@@ -66,7 +61,7 @@ const ProduitCard = React.memo(({ p }: { p: Produits }) => {
             {p.nom}
           </h3>
 
-          <p className="text-sm text-gray-700 line-clamp-2">
+          <p className="text-sm text-gray-700 line-clamp-3">
             {p.description}
           </p>
 
@@ -90,6 +85,13 @@ const ProduitCard = React.memo(({ p }: { p: Produits }) => {
                 className={i < rating ? "text-yellow-400" : "text-gray-300"}
               />
             ))}
+
+
+          {p.isNew && (
+            <span className="absolute top-1 left-1 bg-green-500 text-white px-2 py-1 rounded text-xs">
+              Nouveau
+            </span>
+          )}
           </div>
 
         </div>

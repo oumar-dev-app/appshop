@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import HeartBtn from "@/_Components/HeartBtn";
 
 type Produit = {
   id: number;
@@ -15,6 +16,7 @@ type Produit = {
   image_url?: string;
   category_id: number;
   isNew: number;
+  jaime: number;
 };
 
 type Categorie = {
@@ -64,6 +66,32 @@ export default function BoutiquePage() {
     fetchData();
   }, []);
 
+    /* ANIMATION */
+  useEffect(() => {
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach((entry) => {
+
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+          }
+
+        });
+
+      },
+      { threshold: 0.3 }
+    );
+
+    const elements = document.querySelectorAll('.fade-item');
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+
+  }, [produits]);
+
   const getRating = (id: number) => (id % 5) + 1;
 
   // 🔥 FILTRAGE (optionnel)
@@ -95,10 +123,10 @@ export default function BoutiquePage() {
   return (
     <div className="max-w-7xl mx-auto p-4">
 
-      <h1 className="text-3xl font-bold mb-6">Boutique</h1>
+  {/*     <h1 className="text-3xl font-bold mb-6">Boutique</h1> */}
 
       {/* FILTRES CATEGORIES */}
-      <div className="flex gap-2 flex-wrap mb-6">
+      <div className="fade-item flex gap-2 flex-wrap mb-6">
         <button
           onClick={() => {
             setSelectedCategory(null);
@@ -126,7 +154,7 @@ export default function BoutiquePage() {
       </div>
 
       {/* PRODUITS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="fade-item grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
         {paginatedProducts.map((produit) => {
           const rating = getRating(produit.id);
@@ -134,7 +162,7 @@ export default function BoutiquePage() {
           return (
             <div
               key={produit.id}
-              className="rounded overflow-hidden bg-white shadow-sm hover:shadow-md transition"
+              className="bg-white rounded shadow hover:shadow-xl transition overflow-hidden"
             >
 
               {/* IMAGE */}
@@ -158,47 +186,52 @@ export default function BoutiquePage() {
                 />
               </div>
 
-              {/* CONTENT */}
-              <div className="p-3">
-                <h3 className="font-semibold text-sm line-clamp-1">
-                  {produit.nom}
-                </h3>
 
-                <p className="text-sm text-gray-700 line-clamp-2">
-                  {produit.description}
-                </p>
+                  {/* CONTENT */}
+                  <div className="p-4 space-y-2">
 
-                <div className="mt-3 flex justify-between">
-                  <span className="font-bold text-green-700">
-                    {formatFCFA(produit.prix)}
-                  </span>
+                    <h2 className="font-bold text-lg">{produit.nom}</h2>
 
-                  <span className="text-xs text-gray-500">
-                    Stock: {produit.stock}
-                  </span>
-                </div>
+                    <p className="text-sm text-gray-500 line-clamp-3">
+                      {produit.description}
+                    </p>
 
-                <div className="flex mt-2 text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      size={14}
-                      className={i < rating ? "text-yellow-400" : "text-gray-300"}
-                    />
-                  ))}
-                </div>
-              </div>
+                    <div className="flex mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          size={14}
+                          className={
+                            i < rating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }
+                        />
+                      ))}
+                    </div>
 
-              {/* BUTTON */}
-              <div className="p-3 pt-0">
-                <Link
-                  href={`/produits/${produit.id}`}
-                  className="flex items-center justify-center gap-2 text-sm font-bold bg-green-600 hover:bg-green-700 transition px-4 py-2 text-white rounded w-full"
-                >
-                  Consulter
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
+                    <p className="font-bold text-green-700 text-lg">
+                      {formatFCFA(produit.prix)}
+                    </p>
+
+                    <p className="text-sm">Stock : {produit.stock}</p>
+
+                    <div className="flex justify-between items-center">
+                      <HeartBtn
+                        productId={produit.id}
+                        initialLikes={produit.jaime}
+                      />
+
+                      <Link
+                        href={`/produits/${produit.id}`}
+                        className="flex items-center justify-center gap-2 text-sm font-bold bg-green-600 hover:bg-green-700 transition px-4 py-2 text-white rounded"
+                      >
+                        Consulter
+                        <ArrowRight size={16} />
+                      </Link>
+                    </div>
+
+                  </div>
             </div>
           );
         })}

@@ -235,7 +235,7 @@ export default function ProduitsPage() {
                                 >
                                     <img
                                         src={p.image_url || "/placeholder.png"}
-                                        className="h-50 w-full object-cover rounded-t"
+                                        className="h-35 w-full object-cover rounded-t"
                                     />
 
                                     <div className="m-3">

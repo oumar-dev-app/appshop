@@ -165,7 +165,7 @@ const AjouteProduitBtn = () => {
                     <div className="min-h-screen flex items-center justify-center p-3">
 
                         {/* CONTENT */}
-                        <div className="relative bg-white text-black w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded shadow-lg">
+                        <div className="relative bg-white text-black w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded shadow-lg m-3">
 
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold">
@@ -218,7 +218,7 @@ const AjouteProduitBtn = () => {
                                     placeholder="Description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="border p-2 rounded h-40 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="border p-2 rounded h-30 focus:outline-none focus:ring-2 focus:ring-green-500"
                                 />
 
                                 <input

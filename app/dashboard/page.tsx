@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AiFillMacCommand } from "react-icons/ai";
 import {
     FaBox,
     FaCalendarDay,
@@ -12,8 +13,9 @@ import {
 type Stats = {
     total: number;
     today: number;
-    delivered: number;
-    pending: number;
+    livraison: number;
+    commande: number;
+    en_attente: number;
 
     totalPrice: number;
     todayPrice: number;
@@ -78,14 +80,14 @@ export default function DashboardPage() {
         fetchStats();
     }, []);
 
-    if (loading) return <p className="p-6 flex justify-center items-center h-screen animate-pulse">Chargement...</p>;
+    if (loading) return <p className="p-6 flex justify-center items-center h-screen animate-pulse text-black">Chargement...</p>;
     if (error) return <p className="p-6 text-red-500">{error}</p>;
     if (!stats) return null;
 
     return (
         <>
             <div className="max-w-7xl m-auto mt-4 mb-2 py-4 px-4 sm:px-6 text-black">
-                
+
                 <h1 className="text-lg sm:text-2xl font-semibold mb-5">
                     Dashboard commandes
                 </h1>
@@ -113,8 +115,8 @@ export default function DashboardPage() {
                         <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
                             <FaCalendarDay className="text-3xl text-green-500" />
                             <div>
-                                <p>Commandes du jour</p>
-                                <h2 className="text-2xl font-bold">{stats.today}</h2>
+                                <p>Livraison</p>
+                                <h2 className="text-2xl font-bold">{stats.livraison}</h2>
                                 <p className="mt-2">
                                     {formatFCFA(stats.todayPrice.toLocaleString())}
                                 </p>
@@ -123,10 +125,22 @@ export default function DashboardPage() {
 
                         {/* PENDING */}
                         <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
-                            <FaClock className="text-3xl text-orange-500" />
+                            <AiFillMacCommand className="text-3xl text-green-500" />
+                            <div>
+                                <p>Commande</p>
+                                <h2 className="text-2xl font-bold">{stats.commande}</h2>
+                                <p className="mt-2">
+                                    {formatFCFA(stats.pendingPrice.toLocaleString())}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="border border-white bg-white border-b-green-400 border-b-3 shadow-lg p-4 rounded-lg flex gap-6 items-center">
+                           <FaClock className="text-3xl text-orange-500" />
+                         
                             <div>
                                 <p>En attente</p>
-                                <h2 className="text-2xl font-bold">{stats.pending}</h2>
+                                <h2 className="text-2xl font-bold">{stats.en_attente}</h2>
                                 <p className="mt-2">
                                     {formatFCFA(stats.pendingPrice.toLocaleString())}
                                 </p>

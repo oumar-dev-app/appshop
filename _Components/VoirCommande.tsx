@@ -7,13 +7,6 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
-/* =========================
-   FORMAT FCFA
-========================= */
-const formatFCFA = (value: any) =>
-    new Intl.NumberFormat("fr-FR", {
-        maximumFractionDigits: 0,
-    }).format(Number(value || 0)) + " FCFA";
 
 /* =========================
    TYPES (DB FR)
@@ -49,10 +42,15 @@ const statusLabels: any = {
     annulee: "Annulée",
 };
 
+// 🔥 FORMAT FCFA SAFE
+const formatFCFA = (value: any) =>
+    new Intl.NumberFormat("fr-FR").format(Number(value || 0)) + " FCFA";
+
 /* =========================
    COMPONENT
 ========================= */
 export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
+    
     const [open, setOpen] = useState(false);
     const [produits, setProduits] = useState<Produit[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
@@ -113,38 +111,51 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
        PDF
     ========================= */
     const generatePDF = async () => {
-        const token = localStorage.getItem("token");
-
-        let dataProduits = produits;
-
+        // ⚠️ important: attendre les produits
         if (produits.length === 0) {
-            const res = await fetch(`/api/commandes/${commande.id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            const data = await res.json();
-            dataProduits = data.produits || [];
-            setProduits(dataProduits);
+            await fetchDetails();
         }
 
         const doc = new jsPDF();
 
+        // HEADER
         doc.setFontSize(18);
-        doc.text("FACTURE DE COMMANDE", 50, 20);
+        doc.text("FACTURE DE COMMANDE", 60, 20);
 
+        doc.setFontSize(11);
+
+        // CLIENT
+        doc.text(`Client: ${commande.nom_client}`, 10, 40);
+        doc.text(`Téléphone: ${commande.telephone}`, 10, 47);
+        doc.text(`Adresse: ${commande.addresse}`, 10, 54);
+        doc.text(`Référence: ${commande.reference}`, 10, 61);
+        doc.text(`Mode: ${commande.mode_commande}`, 10, 68);
+
+        // PRODUITS TABLE
         autoTable(doc, {
-            startY: 40,
+            startY: 85,
             head: [["Produit", "Qté", "Prix", "Total"]],
-            body: dataProduits.map((p) => [
+            body: produits.map((p) => [
                 p.nom,
                 p.quantite,
-                formatFCFA(p.prix_unitaire),
-                formatFCFA(p.quantite * p.prix_unitaire),
+                `${formatFCFA(p.prix_unitaire)}`,
+                `${formatFCFA(p.quantite * p.prix_unitaire)}`,
             ]),
         });
 
         const finalY = (doc as any).lastAutoTable.finalY + 10;
-        doc.text(`TOTAL: ${formatFCFA(commande.total)}`, 10, finalY);
+
+        // TOTAL
+        doc.setFontSize(13);
+        doc.text(
+            `TOTAL: ${formatFCFA(commande.total)}`,
+            10,
+            finalY
+        );
+
+        // FOOTER
+        doc.setFontSize(10);
+        doc.text("Merci pour votre confiance ", 10, finalY + 15);
 
         doc.save(`facture-${commande.reference}.pdf`);
     };
@@ -171,7 +182,7 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
                 <p>Tel: ${commande.telephone}</p>
                 <p>Total: ${formatFCFA(commande.total)}</p>
                 <hr/>
-                <p style="text-align:center;">Merci 🙏</p>
+                <p style="text-align:center;">Merci</p>
             </body>
             </html>
         `);
@@ -184,14 +195,26 @@ export default function VoirCommandeBtn({ commande }: { commande: Commande }) {
        WHATSAPP
     ========================= */
     const sendWhatsApp = () => {
-        const phone = commande.telephone.replace(/[^\d]/g, "");
+        const phone = commande.telephone.replace(/\D/g, "");
 
-        const message =
-            `Bonjour ${commande.nom_client},\n\n` +
-            `Réf: ${commande.reference}\n` +
-            `Adresse: ${commande.addresse}\n` +
-            `Total: ${formatFCFA(commande.total)}\n\n` +
-            `Merci pour votre confiance 🙏`;
+        const isLivraison = commande.mode_commande === "livraison";
+
+        const message = isLivraison
+            ? `Bonjour ${commande.nom_client},
+
+            Votre commande est en livraison 
+            Réf: ${commande.reference}
+            Adresse: ${commande.addresse}
+           <p>Total: ${formatFCFA(commande.total)}</p>
+
+            Merci pour votre confiance `
+            : `Bonjour ${commande.nom_client},
+
+            Votre commande est confirmée 
+            Réf: ${commande.reference}
+            Adresse: ${commande.addresse}
+             <p>Total: ${formatFCFA(commande.total)}</p>
+            Merci pour votre confiance `;
 
         window.open(
             `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,

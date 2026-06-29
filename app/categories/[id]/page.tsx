@@ -37,6 +37,32 @@ export default function CategoryProductsPage() {
     setCurrentPage(1);
   }, [id]);
 
+    /* ANIMATION */
+  useEffect(() => {
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach((entry) => {
+
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+          }
+
+        });
+
+      },
+      { threshold: 0.2 }
+    );
+
+    const elements = document.querySelectorAll('.fade-item');
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+
+  }, [products]);
+
   /* FETCH */
   useEffect(() => {
     const fetchProducts = async () => {
@@ -90,17 +116,25 @@ export default function CategoryProductsPage() {
     <div className="max-w-7xl mx-auto p-5 space-y-6">
 
       {/* HEADER */}
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
-      >
-        <ArrowUpLeft size={18} />
-        Retour
-      </button>
+      <div className="fade-item flex gap-4 items-center">
+        <div>
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
+          >
+            <ArrowLeft size={18} />
 
-      <h1 className="text-2xl font-bold mt-5">
-        Produits de la catégorie
-      </h1>
+          </button>
+        </div>
+
+        <div>
+          <h1 className="text-2xl font-bold">
+            Explore
+          </h1>
+        </div>
+
+      </div>
+
 
       {/* EMPTY */}
       {products.length === 0 ? (
@@ -108,7 +142,7 @@ export default function CategoryProductsPage() {
       ) : (
         <>
           {/* GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="fade-item grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
             {paginatedProducts.map((p) => {
               const rating = getRating(p.id);
@@ -132,7 +166,7 @@ export default function CategoryProductsPage() {
 
                     <h2 className="font-bold text-lg">{p.nom}</h2>
 
-                    <p className="text-sm text-gray-500 line-clamp-2">
+                    <p className="text-sm text-gray-500 line-clamp-3">
                       {p.description}
                     </p>
 
@@ -195,11 +229,10 @@ export default function CategoryProductsPage() {
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`px-4 py-1 rounded-full ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white"
-                    : ""
-                }`}
+                className={`px-4 py-1 rounded-full ${currentPage === i + 1
+                  ? "bg-green-600 text-white"
+                  : ""
+                  }`}
               >
                 {i + 1}
               </button>

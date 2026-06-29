@@ -134,7 +134,7 @@ export default function SliderPage() {
                                 item.image_url ||
                                 "/placeholder.png"
                             }
-                            className="w-full h-50 object-cover rounded-t"
+                            className="w-full h-40 object-cover rounded-t"
                         />
                         <div className="m-3">
                             <h2 className="text-lg font-bold">

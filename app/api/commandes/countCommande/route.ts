@@ -16,15 +16,15 @@ export async function GET() {
         `);
 
         const [pendingRows]: any = await db.query(`
-            SELECT COUNT(*) AS pending
+            SELECT COUNT(*) AS en_attente
             FROM commandes
-            WHERE status = 'pending'
+            WHERE status = 'en_attente'
         `);
 
         const [deliveredRows]: any = await db.query(`
-            SELECT COUNT(*) AS delivered
+            SELECT COUNT(*) AS livree
             FROM commandes
-            WHERE status = 'delivered'
+            WHERE status = 'livree'
         `);
 
         const [livraisonRows]: any = await db.query(`
@@ -54,19 +54,19 @@ export async function GET() {
         const [pendingPriceRows]: any = await db.query(`
             SELECT COALESCE(SUM(total), 0) AS pendingPrice
             FROM commandes
-            WHERE status = 'pending'
+            WHERE status = 'en_attente'
         `);
 
         const [deliveredPriceRows]: any = await db.query(`
             SELECT COALESCE(SUM(total), 0) AS deliveredPrice
             FROM commandes
-            WHERE status = 'delivered'
+            WHERE status = 'livree'
         `);
         return NextResponse.json({
             total: totalRows[0].total,
             today: todayRows[0].today,
-            pending: pendingRows[0].pending,
-            delivered: deliveredRows[0].delivered,
+            en_attente: pendingRows[0].en_attente,
+            livree: deliveredRows[0].livree,
 
             livraison: livraisonRows[0].livraison,
             commande: commandeRows[0].commande,

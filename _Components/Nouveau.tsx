@@ -83,14 +83,14 @@ const Nouveau = () => {
 
           <div
             key={item.id}
-            className="min-w-60.5 snap-start rounded overflow-hidden bg-white shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-1"
+            className="min-w-41.5 snap-start rounded overflow-hidden bg-white shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-1"
           >
             <Link
               href={`/categories/${item.id}`}
               
             >
               {/* IMAGE */}
-              <div className="relative w-full h-40 overflow-hidden">
+              <div className="relative w-full h-28 overflow-hidden">
 
 
                 <Image
@@ -103,13 +103,13 @@ const Nouveau = () => {
               </div>
 
               {/* FOOTER */}
-              <div className="p-3 flex justify-between items-center">
+              <div className="p-2 flex justify-between items-center gap-2">
 
-                <h2 className="font-semibold text-lg">
+                <h2 className="font-bold text-sm">
                   {item.nom}
                 </h2>
                 <div className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition">
-                  <ArrowUpRight size={20} />
+                  <ArrowUpRight size={16} />
                 </div>
               </div>
             </Link>

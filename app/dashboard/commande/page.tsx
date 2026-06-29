@@ -175,9 +175,7 @@ export default function CommandePage() {
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card title="📦 En attente" value={stats.en_attente ?? 0} />
                 <Card title="🚚 Livrées" value={stats.livree ?? 0} />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
+                <Card title="Récupérée" value={stats.commande ?? 0} />
                 <Card
                     title="💰 Chiffre d'affaires"
                     value={formatFCFA(stats.totalPrice ?? 0)}
@@ -243,10 +241,10 @@ export default function CommandePage() {
                                             ${commande.status === "en_attente"
                                                 ? "bg-yellow-500 text-black"
                                                 : commande.status === "livree"
-                                                ? "bg-green-600 text-white"
-                                                : commande.status === "annulee"
-                                                ? "bg-red-600 text-white"
-                                                : "bg-gray-500 text-white"
+                                                    ? "bg-green-600 text-white"
+                                                    : commande.status === "annulee"
+                                                        ? "bg-red-600 text-white"
+                                                        : "bg-gray-500 text-white"
                                             }`}>
                                             {statusLabels[commande.status] || commande.status}
                                         </span>

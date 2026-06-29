@@ -35,7 +35,7 @@ const Logo = () => {
     <div>
       <img src={logo}
         alt="Logo boutique"
-        className="h-20 w-20 object-contain rounded"
+        className="h-20 w-20 object-contain rounded-lg"
       />
     </div>
   );

@@ -16,7 +16,7 @@ export async function GET() {
         );
 
         const [stockValueRows]: any = await db.query(
-            "SELECT COALESCE(SUM(stock + prix),0) AS stockValue FROM produits"
+            "SELECT COALESCE(SUM(prix),0) AS stockValue FROM produits"
         );
 
         const [maxPriceRows]: any = await db.query(

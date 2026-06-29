@@ -37,6 +37,33 @@ export default function PageApropos() {
         fetchApropos();
     }, []);
 
+      /* ANIMATION */
+  useEffect(() => {
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach((entry) => {
+
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+          }
+
+        });
+
+      },
+      { threshold: 0.3 }
+    );
+
+    const elements = document.querySelectorAll('.fade-item');
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+
+  }, [apropos]);
+
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center px-4 animate-pulse">
@@ -48,11 +75,11 @@ export default function PageApropos() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-8 sm:py-10">
+        <div className="fade-item min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:py-10">
 
             <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
 
-                <div className="p-5 sm:p-6 md:p-10">
+                <div className="fade-item p-5 sm:p-6 md:p-10">
 
                     {/* TITRE */}
                     <div className="text-center mb-8">

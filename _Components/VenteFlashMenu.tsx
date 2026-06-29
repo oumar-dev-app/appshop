@@ -41,11 +41,7 @@ const ProduitCard = React.memo(({ p }: { p: Produit }) => {
         <div className="snap-start w-full rounded bg-white shadow-sm hover:shadow-md transition overflow-hidden">
 
             <div className="relative w-full h-44 bg-gray-100">
-                {p.isNew && (
-                    <span className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
-                        Nouveau
-                    </span>
-                )}
+
                 <Image
                     src={
                         p.image_url?.startsWith("http")
@@ -64,7 +60,7 @@ const ProduitCard = React.memo(({ p }: { p: Produit }) => {
                     {p.nom}
                 </h3>
 
-                <p className="text-sm text-gray-700 line-clamp-2">
+                <p className="text-sm text-gray-700 line-clamp-3">
                     {p.description}
                 </p>
 
@@ -86,6 +82,12 @@ const ProduitCard = React.memo(({ p }: { p: Produit }) => {
                             className={i < rating ? "text-yellow-400" : "text-gray-300"}
                         />
                     ))}
+
+                    {p.isNew && (
+                        <span className="absolute top-1 left-1 bg-green-500 text-white px-2 py-1 rounded text-xs">
+                            Nouveau
+                        </span>
+                    )}
                 </div>
             </div>
             <div className='flex justify-between items-center m-3'>
@@ -296,7 +298,7 @@ export default function VenteFlashMenu() {
                     </p>
                 )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:flex items-center justify-center md:overflow-x-auto gap-3 pb-3 mt-8">
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:flex items-center justify-center md:overflow-x-auto gap-3 pb-3 mt-8">
                     {loadingCategories ? (
                         <p className="text-black text-sm animate-pulse">Chargement...</p>
                     ) : (
