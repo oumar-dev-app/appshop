@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpLeft } from "lucide-react";
 import { FaStar } from "react-icons/fa";
-import HeartBtn from "@/_Components/HeartBtn";
+import HeartBtn from "../../_Components/HeartBtn";
 import { motion } from "framer-motion";
 
 type Produit = {

@@ -22,7 +22,7 @@ type EditBtnProps = {
 const formatFCFA = (value: any) =>
     new Intl.NumberFormat("fr-FR").format(Number(value || 0)) + " FCFA";
 
-export default function EditBtn({
+export default function EditBouton({
     produit,
     onUpdated,
 }: EditBtnProps) {

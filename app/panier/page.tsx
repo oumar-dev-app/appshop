@@ -7,11 +7,11 @@ import {
     CartItem,
     getCart,
     removeFromCart,
-} from "@/lib/cart";
+} from "../../lib/cart";
 
 import { ArrowLeft, ArrowUpLeft, Trash, X } from "lucide-react";
 import { FaBoxOpen, FaTruck } from "react-icons/fa";
-import FormulaireLivre from "@/_Components/FormulaireLivre";
+import FormulaireLivre from "../../_Components/FormulaireLivre";
 import { useRouter } from "next/navigation";
 
 // 🔥 FORMAT FCFA SAFE

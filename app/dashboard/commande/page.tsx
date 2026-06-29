@@ -1,7 +1,7 @@
 'use client';
 
-import AjouteCommandeBtn from "@/_Components/AjouteCommandeBtn";
-import VoirCommandeBtn from "@/_Components/VoirCommande";
+import AjouteCommandeBtn from "../../../_Components/AjouteCommandeBtn";
+import VoirCommandeBtn from "../../../_Components/VoirCommande";
 import { motion } from "framer-motion";
 import { Search, Trash } from "lucide-react";
 import { useEffect, useState } from "react";

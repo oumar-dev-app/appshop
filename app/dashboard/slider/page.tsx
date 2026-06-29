@@ -1,9 +1,9 @@
 'use client'
-import BtnAjouteSlider from "@/_Components/BtnAjouteSlider"
-import EditSliderBtn from "@/_Components/EditSliderBtn";
+import EditSliderBtn from "../../../_Components/EditSliderBtn";
 import { Trash } from "lucide-react"
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import BtnAjouteSlider from "../../../_Components/BtnAjouteSlider";
 
 type Slider = {
     id: number;

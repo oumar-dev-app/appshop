@@ -1,6 +1,6 @@
 import React from "react";
-import HeaderDashboard from "@/_Components/HeaderDashboard";
-import SliderBar from "@/_Components/SliderBar";
+import SliderBar from "../../_Components/SliderBar";
+import HeaderDashboard from "../../_Components/HeaderDashboard";
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (

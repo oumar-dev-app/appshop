@@ -1,10 +1,8 @@
 "use client";
-
 import { Poppins } from "next/font/google";
 import "./globals.css";
-
-import Header from "@/_Components/Header";
-import Footer from "@/_Components/Footer";
+import HeaderH from "../_Components/Header";
+import Footer from "../_Components/Footer";
 import { Toaster } from "sonner";
 
 import { usePathname } from "next/navigation";
@@ -44,7 +42,7 @@ export default function RootLayout({
         <Toaster richColors position="top-right" />
 
         {/* CACHE HEADER */}
-        {!isDashboard && <Header />}
+        {!isDashboard && <HeaderH />}
 
         <main className="flex-1">
           {children}

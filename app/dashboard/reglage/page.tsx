@@ -1,7 +1,7 @@
-'use client'
-import BoutiqueReglage from "@/_Components/BoutiqueReglage";
-import ChangerPassword from "@/_Components/ChangerPassword";
-import ModifierProfil from "@/_Components/ModifierProfil";
+'use client';
+import BoutiqueReglage from "../../../_Components/BoutiqueReglage";
+import ChangerPassword from "../../../_Components/ChangerPassword";
+import ModifierProfil from "../../../_Components/ModifierProfil";
 import { useEffect, useState } from "react";
 
 type User = {

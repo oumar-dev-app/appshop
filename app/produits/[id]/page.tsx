@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { addToCart } from "@/lib/cart";
+import { addToCart } from "../../../lib/cart";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 

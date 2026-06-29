@@ -4,7 +4,7 @@ import Logo from "./Logo";
 import NavLinks from "./NavLinks";
 import NavLinksIcons from "./NavLinksIcons";
 
-const Header = () => {
+const HeaderH = () => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -39,4 +39,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderH;

@@ -3,8 +3,8 @@
 import { Search, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import AjouteCategoryBtn from "@/_Components/AjouteCategoryBtn";
-import EditBtnCategory from "@/_Components/EditBtnCategory";
+import AjouteCategoryBtn from "../../../_Components/AjouteCategoryBtn";
+import EditBtnCategory from "../../../_Components/EditBtnCategory";
 import { motion } from "framer-motion";
 
 // =========================

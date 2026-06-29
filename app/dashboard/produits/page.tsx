@@ -2,10 +2,11 @@
 
 import { ArrowLeft, ArrowRight, Search, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
-import AjouteProduitBtn from "@/_Components/AjouteProduitBtn";
+import AjouteProduitBtn from "../../../_Components/AjouteProduitBtn";
 import { toast } from "sonner";
-import EditBtn from "@/_Components/EditBtn";
+import EditBouton from "../../../_Components/EditBtn";
 import { motion } from "framer-motion";
+import EditBtn from "../../../_Components/EditBtn";
 
 
 type Stats = {

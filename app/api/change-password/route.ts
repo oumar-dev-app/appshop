@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { db } from "@/lib/db";
+import { db } from "../../../lib/db";
 import bcrypt from "bcryptjs";
 
 const SECRET = process.env.JWT_SECRET!;
