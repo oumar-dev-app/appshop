@@ -200,7 +200,7 @@ const FormulaireRegister = ({
         className="border p-2 rounded-lg w-full"
       />
       <input
-        type="password"
+        type="text"
         value={image_url}
         onChange={(e) => setImage_url(e.target.value)}
         placeholder="Mot de passe"
