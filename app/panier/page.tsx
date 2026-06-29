@@ -50,31 +50,31 @@ export default function PanierPage() {
         };
     }, []);
 
-      /* ANIMATION */
-      useEffect(() => {
-    
+    /* ANIMATION */
+    useEffect(() => {
+
         const observer = new IntersectionObserver(
-          (entries) => {
-    
-            entries.forEach((entry) => {
-    
-              if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-              }
-    
-            });
-    
-          },
-          { threshold: 0.3 }
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+
+                });
+
+            },
+            { threshold: 0.3 }
         );
-    
+
         const elements = document.querySelectorAll('.fade-item');
-    
+
         elements.forEach((el) => observer.observe(el));
-    
+
         return () => observer.disconnect();
-    
-      }, [cart]);
+
+    }, [cart]);
 
     const handleRemove = (id: number) => {
         removeFromCart(id);
@@ -185,7 +185,7 @@ export default function PanierPage() {
             )}
 
             {/* MODAL */}
- {modal && (
+            {modal && (
                 <div
                     className=" fixed inset-0 z-50 flex items-center justify-center"
                     onClick={() => setModal(null)}
