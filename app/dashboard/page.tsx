@@ -104,9 +104,6 @@ export default function DashboardPage() {
                             <div>
                                 <p>Total commandes</p>
                                 <h2 className="text-2xl font-bold">{stats.total}</h2>
-                                <p className="mt-2">
-                                    {formatFCFA(stats.totalPrice.toLocaleString())}
-                                </p>
                             </div>
                         </div>
 
@@ -116,9 +113,6 @@ export default function DashboardPage() {
                             <div>
                                 <p>Livraison</p>
                                 <h2 className="text-2xl font-bold">{stats.livraison}</h2>
-                                <p className="mt-2">
-                                    {formatFCFA(stats.todayPrice.toLocaleString())}
-                                </p>
                             </div>
                         </div>
 
@@ -128,9 +122,6 @@ export default function DashboardPage() {
                             <div>
                                 <p>Commande</p>
                                 <h2 className="text-2xl font-bold">{stats.commande}</h2>
-                                <p className="mt-2">
-                                    {formatFCFA(stats.pendingPrice.toLocaleString())}
-                                </p>
                             </div>
                         </div>
 
@@ -140,9 +131,6 @@ export default function DashboardPage() {
                             <div>
                                 <p>En attente</p>
                                 <h2 className="text-2xl font-bold">{stats.en_attente}</h2>
-                                <p className="mt-2">
-                                    {formatFCFA(stats.pendingPrice.toLocaleString())}
-                                </p>
                             </div>
                         </div>
 
