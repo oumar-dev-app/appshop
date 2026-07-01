@@ -31,11 +31,16 @@ export async function proxy(req: NextRequest) {
       pathname.startsWith("/api/me")
     ) && method === "GET"
 
+      const isPublicPost =
+    (
+      pathname.startsWith("/api/commandes")
+    ) && method === "POST"
+
   const isPublicLike =
     /^\/api\/produits\/\d+\/like$/.test(pathname) &&
     method === "POST";
 
-  if (isPublicRoute || isPublicGet || isPublicLike) {
+  if (isPublicRoute || isPublicGet || isPublicPost || isPublicLike) {
     return NextResponse.next();
   }
 

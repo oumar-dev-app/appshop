@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
 
 import { CartItem } from "../lib/cart";
+import { toast } from "sonner";
 
 type Props = {
   type: "commander" | "livre";
@@ -36,112 +37,122 @@ export default function FormulaireLivre({
   // =========================
   // 📍 GPS
   // =========================
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Géolocalisation non supportée.");
-      return;
-    }
+const getLocation = () => {
+  if (!navigator.geolocation) {
+    toast.error("Géolocalisation non supportée.");
+    return;
+  }
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
 
-        setLocation(
-          `https://maps.google.com/?q=${latitude},${longitude}`
-        );
-      },
+      setLocation(
+        `https://maps.google.com/?q=${latitude},${longitude}`
+      );
 
-      (error) => {
-        console.log("GPS ERROR:", error);
+      toast.success("Localisation récupérée avec succès.");
+    },
 
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            alert(
-              "Veuillez autoriser la localisation dans votre navigateur."
-            );
-            break;
+    (error) => {
+      console.log("GPS ERROR:", error);
 
-          case error.POSITION_UNAVAILABLE:
-            alert("Position indisponible.");
-            break;
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          toast.error(
+            "Veuillez autoriser la localisation dans votre navigateur."
+          );
+          break;
 
-          case error.TIMEOUT:
-            alert("Le délai de localisation est dépassé. Réessayez.");
-            break;
+        case error.POSITION_UNAVAILABLE:
+          toast.error("Position indisponible.");
+          break;
 
-          default:
-            alert("Erreur de géolocalisation.");
-        }
-      },
+        case error.TIMEOUT:
+          toast.error("Le délai de localisation est dépassé. Réessayez.");
+          break;
 
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
+        default:
+          toast.error("Erreur de géolocalisation.");
       }
-    );
-  };
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    }
+  );
+};
 
   // =========================
   // 🛒 Submit
   // =========================
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
+const handleSubmit = async (
+  e: React.FormEvent
+) => {
+  e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
-
-      const data = {
-        nom_client: nom,
-        telephone,
-        addresse,
-        gps: location,
-
-        mode_commande:
-          type === "livre"
-            ? "livraison"
-            : "commande",
-
-        paiement,
-
-        total,
-
-        produits: cart.map((item) => ({
-          produit_id: item.id,
-          quantite: item.quantity,
-        })),
-      };
-
-      const res = await fetch("/api/commandes", {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        alert(result.message);
-        return;
-      }
-
-      alert("Commande créée avec succès");
-
-      localStorage.removeItem("cart");
-
-      window.location.reload();
-    } catch (error) {
-      console.log(error);
-      alert("Erreur serveur");
+  try {
+    if (
+      type === "livre" &&
+      !location.trim()
+    ) {
+      toast.error("Veuillez renseigner votre localisation.");
+      return;
     }
-  };
+
+    const data = {
+      nom_client: nom,
+      telephone,
+      addresse,
+      gps: location,
+
+      mode_commande:
+        type === "livre"
+          ? "livraison"
+          : "commande",
+
+      paiement,
+
+      total,
+
+      produits: cart.map((item) => ({
+        produit_id: item.id,
+        quantite: item.quantity,
+      })),
+    };
+
+    const res = await fetch("/api/commandes", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      toast.error(result.message);
+      return;
+    }
+
+    toast.success("Commande envoyé avec succès 🎉");
+
+    localStorage.removeItem("cart");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Une erreur est survenue.");
+  }
+};
 
   return (
     <div>
@@ -170,7 +181,6 @@ export default function FormulaireLivre({
           onChange={(e) => setTelephone(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
           placeholder="Téléphone"
-          required
         />
 
         {/* ADRESSE */}
@@ -179,7 +189,6 @@ export default function FormulaireLivre({
           onChange={(e) => setAddresse(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
           placeholder="Adresse"
-          required
         />
 
         {/* PAIEMENT */}
