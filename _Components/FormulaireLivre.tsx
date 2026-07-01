@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
 
 import { CartItem } from "../lib/cart";
@@ -15,60 +16,71 @@ export default function FormulaireLivre({
   cart,
   total,
 }: Props) {
-
   const [location, setLocation] = useState("");
-
   const [nom, setNom] = useState("");
   const [telephone, setTelephone] = useState("");
   const [addresse, setAddresse] = useState("");
   const [paiement, setPaiement] = useState("Orange Money");
 
+  // Détection iPhone / iPad
+  const isIOS = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+
+    return (
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" &&
+        navigator.maxTouchPoints > 1)
+    );
+  }, []);
+
   // =========================
   // 📍 GPS
   // =========================
-const getLocation = () => {
-  if (!navigator.geolocation) {
-    alert("Géolocalisation non supportée");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude, longitude } = pos.coords;
-
-      setLocation(
-        `https://maps.google.com/?q=${latitude},${longitude}`
-      );
-    },
-
-    (error) => {
-      console.log("GPS ERROR:", error);
-
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          alert("Autorisez la localisation dans votre navigateur");
-          break;
-
-        case error.POSITION_UNAVAILABLE:
-          alert("Position indisponible");
-          break;
-
-        case error.TIMEOUT:
-          alert("Délai dépassé, réessayez");
-          break;
-
-        default:
-          alert("Erreur GPS inconnue");
-      }
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0,
+  const getLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Géolocalisation non supportée.");
+      return;
     }
-  );
-};
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+
+        setLocation(
+          `https://maps.google.com/?q=${latitude},${longitude}`
+        );
+      },
+
+      (error) => {
+        console.log("GPS ERROR:", error);
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert(
+              "Veuillez autoriser la localisation dans votre navigateur."
+            );
+            break;
+
+          case error.POSITION_UNAVAILABLE:
+            alert("Position indisponible.");
+            break;
+
+          case error.TIMEOUT:
+            alert("Le délai de localisation est dépassé. Réessayez.");
+            break;
+
+          default:
+            alert("Erreur de géolocalisation.");
+        }
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  };
 
   // =========================
   // 🛒 Submit
@@ -76,13 +88,10 @@ const getLocation = () => {
   const handleSubmit = async (
     e: React.FormEvent
   ) => {
-
     e.preventDefault();
 
     try {
-
-      const token =
-        localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
       const data = {
         nom_client: nom,
@@ -105,22 +114,16 @@ const getLocation = () => {
         })),
       };
 
-      const res = await fetch(
-        "/api/commandes",
-        {
-          method: "POST",
+      const res = await fetch("/api/commandes", {
+        method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
 
-            Authorization:
-              `Bearer ${token}`,
-          },
-
-          body: JSON.stringify(data),
-        }
-      );
+        body: JSON.stringify(data),
+      });
 
       const result = await res.json();
 
@@ -131,29 +134,22 @@ const getLocation = () => {
 
       alert("Commande créée avec succès");
 
-      // 🧹 vider panier
       localStorage.removeItem("cart");
 
       window.location.reload();
-
     } catch (error) {
-
       console.log(error);
-
       alert("Erreur serveur");
     }
   };
 
   return (
     <div>
-
       <form
         onSubmit={handleSubmit}
         className="space-y-4 text-black"
       >
-
         <h1 className="text-xl font-bold text-center">
-
           {type === "livre"
             ? "Formulaire de livraison"
             : "Formulaire de commande"}
@@ -162,9 +158,7 @@ const getLocation = () => {
         {/* NOM */}
         <input
           value={nom}
-          onChange={(e) =>
-            setNom(e.target.value)
-          }
+          onChange={(e) => setNom(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
           placeholder="Nom complet"
           required
@@ -173,9 +167,7 @@ const getLocation = () => {
         {/* TEL */}
         <input
           value={telephone}
-          onChange={(e) =>
-            setTelephone(e.target.value)
-          }
+          onChange={(e) => setTelephone(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
           placeholder="Téléphone"
           required
@@ -184,9 +176,7 @@ const getLocation = () => {
         {/* ADRESSE */}
         <input
           value={addresse}
-          onChange={(e) =>
-            setAddresse(e.target.value)
-          }
+          onChange={(e) => setAddresse(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
           placeholder="Adresse"
           required
@@ -195,38 +185,26 @@ const getLocation = () => {
         {/* PAIEMENT */}
         <select
           value={paiement}
-          onChange={(e) =>
-            setPaiement(e.target.value)
-          }
+          onChange={(e) => setPaiement(e.target.value)}
           className="w-full border rounded-lg p-3 text-sm"
         >
-          <option>
-            Orange Money
-          </option>
-
-          <option>
-            Moov Money
-          </option>
-
-          <option>
-            Paiement à la livraison
-          </option>
+          <option>Orange Money</option>
+          <option>Moov Money</option>
+          <option>Paiement à la livraison</option>
         </select>
 
         {/* GPS */}
         {type === "livre" && (
           <div className="space-y-2">
-
             <label className="text-sm font-medium">
               Localisation GPS
             </label>
 
             <div className="flex flex-col sm:flex-row gap-2">
-
               <input
                 value={location}
-                readOnly
-                placeholder="Cliquez sur GPS"
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Cliquez sur GPS ou collez un lien Google Maps"
                 className="flex-1 border rounded-lg p-3 text-sm"
               />
 
@@ -238,9 +216,19 @@ const getLocation = () => {
                 <MapPin size={18} />
                 GPS
               </button>
-
             </div>
 
+            {isIOS && (
+              <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
+                <p className="text-sm text-amber-800">
+                  📍 <strong>Utilisateurs d'iPhone :</strong> si le bouton
+                  <strong> GPS</strong> ne fonctionne pas, ouvrez
+                  <strong> Google Maps</strong> ou <strong>Plans</strong>,
+                  récupérez votre position, puis copiez-collez le lien de
+                  localisation dans le champ ci-dessus.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -257,12 +245,8 @@ const getLocation = () => {
           {type === "livre"
             ? "Confirmer la livraison"
             : "Confirmer la commande"}
-
         </button>
-
       </form>
-
     </div>
   );
 }
-
