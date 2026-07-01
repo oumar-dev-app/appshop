@@ -9,7 +9,7 @@ import {
     removeFromCart,
 } from "../../lib/cart";
 
-import { ArrowUpLeft, Trash, X } from "lucide-react";
+import { ArrowLeft, ArrowUpLeft, Trash, X } from "lucide-react";
 import { FaBoxOpen, FaTruck } from "react-icons/fa";
 import FormulaireLivre from "../../_Components/FormulaireLivre";
 import { useRouter } from "next/navigation";
@@ -61,18 +61,25 @@ export default function PanierPage() {
 
     return (
         <div className="max-w-7xl mx-auto p-3 sm:p-5">
-            <div className="flex flex-col space-y-6">
-                {/* RETOUR */}
-                <button
-                    onClick={() => route.back()}
-                    className="flex items-center gap-2 text-white bg-green-600 hover:bg-green-700 w-fit px-4 py-2 rounded transition"
-                >
-                    <ArrowUpLeft size={18} />
-                    Retour
-                </button>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
-                    Mon panier
-                </h1>
+            <div className=" flex gap-4 items-center">
+                <div>
+                    <button
+                        onClick={() => route.back()}
+                        className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
+                    >
+                        <ArrowLeft size={18} />
+
+                    </button>
+                </div>
+
+                <div>
+
+                    {/* TITRE */}
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+                        Mon panier
+                    </h1>
+                </div>
+
             </div>
 
 
