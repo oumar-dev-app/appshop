@@ -61,26 +61,29 @@ export default function PanierPage() {
 
     return (
         <div className="max-w-7xl mx-auto p-3 sm:p-5">
-            <div className=" flex gap-4 items-center">
-                <div>
-                    <button
-                        onClick={() => route.back()}
-                        className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
-                    >
-                        <ArrowLeft size={18} />
+            <div className="w-full max-w-7xl mx-auto px-5  mb-4 space-y-4">
+                <div className=" flex gap-4 items-center ">
+                    <div>
+                        <button
+                            onClick={() => route.back()}
+                            className="flex items-center gap-2 text-white bg-green-600 px-4 py-2 rounded"
+                        >
+                            <ArrowLeft size={18} />
 
-                    </button>
+                        </button>
+                    </div>
+
+                    <div>
+
+                        {/* TITRE */}
+                        <h1 className="text-2xl sm:text-3xl font-bold">
+                            Mon panier
+                        </h1>
+                    </div>
+
                 </div>
-
-                <div>
-
-                    {/* TITRE */}
-                    <h1 className="text-2xl sm:text-3xl font-bold">
-                        Mon panier
-                    </h1>
-                </div>
-
             </div>
+
 
 
             {cart.length === 0 ? (

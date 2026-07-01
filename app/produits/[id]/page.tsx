@@ -167,7 +167,7 @@ export default function ConsulterProduit() {
 
                 {/* HEADER STYLE CATÉGORIE */}
                 {/* HEADER */}
-                <div className="w-full max-w-7xl mx-auto px-5  mb-6 space-y-4">
+                <div className="w-full max-w-7xl mx-auto px-5  mb-4 space-y-4">
 
                     {/* BOUTON RETOUR */}
                     <div className=" flex gap-4 items-center">
