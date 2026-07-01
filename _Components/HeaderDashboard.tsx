@@ -41,7 +41,7 @@ function Header() {
 
     return (
         <header className="mx-4 sm:mx-6 lg:mx-8">
-            <div className="max-w-7xl m-auto border bg-white text-black rounded-lg shadow-lg mt-4 mb-2 py-4 px-4 sm:px-6 flex items-center justify-between">
+            <div className="max-w-7xl m-auto bg-white text-black rounded-lg shadow-lg mt-4 mb-2 py-4 px-4 sm:px-6 flex items-center justify-between">
 
                 <h1 className="text-lg sm:text-2xl font-semibold">
                     Dashboard

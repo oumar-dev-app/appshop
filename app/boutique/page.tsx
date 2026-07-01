@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import HeartBtn from "../../_Components/HeartBtn";
+import { motion } from "framer-motion";
 
 type Produit = {
   id: number;
@@ -66,31 +67,6 @@ export default function BoutiquePage() {
     fetchData();
   }, []);
 
-    /* ANIMATION */
-  useEffect(() => {
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-
-        entries.forEach((entry) => {
-
-          if (entry.isIntersecting) {
-            entry.target.classList.add('show');
-          }
-
-        });
-
-      },
-      { threshold: 0.3 }
-    );
-
-    const elements = document.querySelectorAll('.fade-item');
-
-    elements.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-
-  }, [produits]);
 
   const getRating = (id: number) => (id % 5) + 1;
 
@@ -121,75 +97,81 @@ export default function BoutiquePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
+    <div className=" max-w-7xl mx-auto p-4">
 
-  {/*     <h1 className="text-3xl font-bold mb-6">Boutique</h1> */}
-
-      {/* FILTRES CATEGORIES */}
-      <div className="fade-item flex gap-2 flex-wrap mb-6">
-        <button
-          onClick={() => {
-            setSelectedCategory(null);
-            setCurrentPage(1);
-          }}
-          className={`px-3 py-1 border rounded ${selectedCategory === null ? "bg-green-600 text-white" : ""
-            }`}
-        >
-          Tous
-        </button>
-
-        {categories.map((cat) => (
+      {/*     <h1 className="text-3xl font-bold mb-6">Boutique</h1> */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* FILTRES CATEGORIES */}
+        <div className=" flex gap-2 flex-wrap mb-6">
           <button
-            key={cat.id}
             onClick={() => {
-              setSelectedCategory(cat.id);
+              setSelectedCategory(null);
               setCurrentPage(1);
             }}
-            className={`px-3 py-1 border rounded ${selectedCategory === cat.id ? "bg-green-600 text-white" : ""
+            className={`px-3 py-1 border rounded ${selectedCategory === null ? "bg-green-600 text-white" : ""
               }`}
           >
-            {cat.nom}
+            Tous
           </button>
-        ))}
-      </div>
 
-      {/* PRODUITS */}
-      <div className="fade-item grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-
-        {paginatedProducts.map((produit) => {
-          const rating = getRating(produit.id);
-
-          return (
-            <div
-              key={produit.id}
-              className="bg-white rounded shadow hover:shadow-xl transition overflow-hidden"
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => {
+                setSelectedCategory(cat.id);
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1 border rounded ${selectedCategory === cat.id ? "bg-green-600 text-white" : ""
+                }`}
             >
+              {cat.nom}
+            </button>
+          ))}
+        </div>
 
-              {/* IMAGE */}
-              <div className="relative w-full h-44 bg-gray-100">
+        {/* PRODUITS */}
+        {paginatedProducts.length === 0 ? (
+          <div className=" flex justify-center items-center py-16">
+            <p className="text-lg text-gray-500 font-medium">
+              Aucun produit trouvé.
+            </p>
+          </div>
+        ) : (
+          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {paginatedProducts.map((produit) => {
+              const rating = getRating(produit.id);
 
-                {produit.isNew === 1 && (
-                  <span className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
-                    Nouveau
-                  </span>
-                )}
+              return (
+                <div
+                  key={produit.id}
+                  className="bg-white rounded shadow hover:shadow-xl transition overflow-hidden"
+                >
+                  {/* IMAGE */}
+                  <div className="relative w-full h-44 bg-gray-100">
+                    {produit.isNew === 1 && (
+                      <span className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
+                        Nouveau
+                      </span>
+                    )}
 
-                <Image
-                  src={
-                    produit.image_url?.startsWith("http")
-                      ? produit.image_url
-                      : produit.image_url || "/placeholder.png"
-                  }
-                  alt={produit.nom}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
+                    <Image
+                      src={
+                        produit.image_url?.startsWith("http")
+                          ? produit.image_url
+                          : produit.image_url || "/placeholder.png"
+                      }
+                      alt={produit.nom}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
 
                   {/* CONTENT */}
                   <div className="p-4 space-y-2">
-
                     <h2 className="font-bold text-lg">{produit.nom}</h2>
 
                     <p className="text-sm text-gray-500 line-clamp-3">
@@ -202,9 +184,7 @@ export default function BoutiquePage() {
                           key={i}
                           size={14}
                           className={
-                            i < rating
-                              ? "text-yellow-400"
-                              : "text-gray-300"
+                            i < rating ? "text-yellow-400" : "text-gray-300"
                           }
                         />
                       ))}
@@ -230,47 +210,47 @@ export default function BoutiquePage() {
                         <ArrowRight size={16} />
                       </Link>
                     </div>
-
                   </div>
-            </div>
-          );
-        })}
-      </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="rounded-full bg-green-500 p-3 shadow hover:bg-green-600  transition text-white disabled:opacity-50"
-          >
-            <ArrowLeft size={20} />
-          </button>
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 mt-8">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="rounded-full bg-green-500 p-3 shadow hover:bg-green-600  transition text-white disabled:opacity-50"
+            >
+              <ArrowLeft size={20} />
+            </button>
 
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`px-4 py-2 rounded-full  shadow hover:bg-green-600 ${
-                  currentPage === i + 1
-                    ? "bg-green-600 text-white"
-                    : ""
-                }`}
+                className={`px-4 py-2 rounded-full  shadow hover:bg-green-600 ${currentPage === i + 1
+                  ? "bg-green-600 text-white"
+                  : ""
+                  }`}
               >
                 {i + 1}
               </button>
             ))}
 
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="rounded-full bg-green-500 p-3 shadow hover:bg-green-600 mr-5 transition text-white disabled:opacity-50"
-          >
-            <ArrowRight size={20} />
-          </button>
-        </div>
-      )}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="rounded-full bg-green-500 p-3 shadow hover:bg-green-600 mr-5 transition text-white disabled:opacity-50"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 }

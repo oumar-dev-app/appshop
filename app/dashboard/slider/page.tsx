@@ -140,7 +140,7 @@ export default function SliderPage() {
                             <h2 className="text-lg font-bold">
                                 {item.title}
                             </h2>
-                            <p>
+                            <p className="line-clamp-2">
                                 {item.description}
                             </p>
                             <div className="flex justify-end gap-5 mt-2">

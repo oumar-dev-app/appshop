@@ -8,7 +8,8 @@ type User = {
     prenom: string;
     telephone: string;
     email: string;
-    role:string
+    image_url?: string;
+    role: string
 };
 
 type ModifierProfilProps = {
@@ -23,6 +24,8 @@ const ModifierProfil = ({ user, onUpdated }: ModifierProfilProps) => {
     const [prenom, setPrenom] = useState("");
     const [telephone, setTelephone] = useState("");
     const [email, setEmail] = useState("");
+    const [image_url, setImage_url] = useState("");
+    const [uploading, setUploading] = useState(false);
 
     const [saving, setSaving] = useState(false);
 
@@ -33,6 +36,7 @@ const ModifierProfil = ({ user, onUpdated }: ModifierProfilProps) => {
             setPrenom(user.prenom);
             setTelephone(user.telephone);
             setEmail(user.email);
+            setImage_url(user.image_url);
         }
     }, [user, modal]);
 
@@ -58,6 +62,7 @@ const ModifierProfil = ({ user, onUpdated }: ModifierProfilProps) => {
                     prenom,
                     telephone,
                     email,
+                    image_url
                 }),
             });
 
@@ -85,6 +90,39 @@ const ModifierProfil = ({ user, onUpdated }: ModifierProfilProps) => {
     };
 
     if (!user) return null;
+
+    // UPLOAD IMAGE
+    const uploadImage = async (file: File) => {
+        try {
+            setUploading(true);
+
+            const token = localStorage.getItem("token");
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Erreur upload image");
+            }
+
+            setImage_url(data.imageUrl);
+        } catch (error: any) {
+            toast.error(error.message || "Erreur upload image");
+        } finally {
+            setUploading(false);
+        }
+    };
+
 
     return (
         <div>
@@ -114,6 +152,33 @@ const ModifierProfil = ({ user, onUpdated }: ModifierProfilProps) => {
                         </div>
 
                         <form onSubmit={handleUpdate} className="flex flex-col gap-3">
+
+                                                        {/* IMAGE PREVIEW */}
+                            {image_url && (
+                                <img
+                                    src={image_url}
+                                    className="w-full h-30 object-cover rounded border"
+                                />
+                            )}
+
+                            {/* UPLOAD IMAGE */}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    await uploadImage(file);
+                                }}
+                                className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+
+                            {uploading && (
+                                <p className="text-sm text-blue-500">
+                                    Upload image...
+                                </p>
+                            )}
+
                             <input
                                 value={nom}
                                 onChange={(e) => setNom(e.target.value)}

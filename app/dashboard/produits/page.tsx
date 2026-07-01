@@ -239,10 +239,11 @@ export default function ProduitsPage() {
                                         className="h-35 w-full object-cover rounded-t"
                                     />
 
-                                    <div className="m-3">
+                                    <div className="px-2 py-2">
                                         <h2 className="text-lg font-bold">{p.nom}</h2>
+                                        <p className="line-clamp-2">{p.description}</p>
 
-                                        <div className="flex justify-between">
+                                        <div className="flex justify-between mt-2">
                                             <p className="font-bold">
                                                 💰 {formatFCFA(p.prix)}
                                             </p>
@@ -252,7 +253,7 @@ export default function ProduitsPage() {
                                             </p>
                                         </div>
 
-                                        <div className="flex justify-end gap-5 mt-2">
+                                        <div className="flex justify-end gap-5 mt-2 mb-2">
 
                                             <EditBtn
                                                 produit={p}

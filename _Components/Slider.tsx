@@ -56,7 +56,7 @@ const Slider = () => {
         <div
           key={slide.id}
           className={`
-            absolute inset-0 transition-opacity duration-1000
+             absolute inset-0 transition-opacity duration-1000
             ${index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}
           `}
         >
@@ -69,7 +69,7 @@ const Slider = () => {
           />
 
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-0 bg-black/78" />
 
           {/* Content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">

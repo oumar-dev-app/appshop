@@ -23,11 +23,11 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { id, nom, prenom, telephone, email } = await req.json();
+    const { id, nom, prenom, telephone, email, image_url } = await req.json();
 
     await db.query(
-      "UPDATE users SET nom=?, prenom=?, telephone=?, email=? WHERE id=?",
-      [nom, prenom, telephone, email, id]
+      "UPDATE users SET nom=?, prenom=?, telephone=?, email=?, image_url=? WHERE id=?",
+      [nom, prenom, telephone, email, image_url, id]
     );
 
     return NextResponse.json(
