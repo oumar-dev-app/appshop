@@ -50,53 +50,49 @@ const Slider = () => {
   }, [slides])
 
   return (
-    <div className="relative w-full h-125 overflow-hidden">
-      {/* Slides */}
+    <div className="relative w-full h-125 overflow-hidden bg-black">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`
-             absolute inset-0 transition-opacity duration-1000
-            ${index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}
-          `}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
         >
-          <Image
-            src={slide.image_url}
-            alt={slide.title || 'slider image'}
-            fill
-            priority
-            className="h-45 object-cover w-full rounded-t-lg"
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+            {/* Texte */}
+            <div className="flex flex-col justify-center px-6 md:px-10 lg:px-16 py-10 bg-gray-900">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
+                {slide.title}
+              </h1>
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/78" />
+              <p className="mt-5 text-gray-300 text-base md:text-lg leading-relaxed">
+                {slide.description}
+              </p>
+            </div>
 
-          {/* Content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <h1 className="text-white text-5xl font-bold">
-              {slide.title}
-            </h1>
-
-            <p className="text-white mt-4 text-lg max-w-2xl">
-              {slide.description}
-            </p>
+            {/* Image */}
+            <div className="relative min-h-70 lg:min-h-full">
+              <Image
+                src={slide.image_url}
+                alt={slide.title || "slider image"}
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       ))}
 
       {/* Dots */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
-            className={`
-              w-3 h-3 rounded-full transition-all duration-300
-              ${index === current
-                ? 'bg-white scale-125'
-                : 'bg-white/50 hover:bg-white'
-              }
-            `}
+            className={`w-3 h-3 rounded-full transition ${index === current
+                ? "bg-white scale-125"
+                : "bg-white/50 hover:bg-white"
+              }`}
           />
         ))}
       </div>
