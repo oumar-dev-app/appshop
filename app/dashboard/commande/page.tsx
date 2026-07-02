@@ -60,6 +60,7 @@ export default function CommandePage() {
     const [commandes, setCommandes] = useState<Commande[]>([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [lastCount, setLastCount] = useState(0);
 
     /* =========================
        STATS
@@ -90,26 +91,49 @@ export default function CommandePage() {
     /* =========================
        COMMANDES
     ========================= */
-    useEffect(() => {
-        const fetchCommandes = async () => {
-            try {
-                const token = localStorage.getItem("token");
+    const fetchCommandes = async (showNotification = false) => {
+        try {
+            const token = localStorage.getItem("token");
 
-                const res = await fetch("/api/commandes", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+            const res = await fetch("/api/commandes", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-                const data = await res.json();
-                setCommandes(data.data || []);
-            } catch (error) {
-                console.error(error);
+            const data = await res.json();
+            const nouvellesCommandes = data.data || [];
+
+            if (
+                showNotification &&
+                lastCount > 0 &&
+                nouvellesCommandes.length > lastCount
+            ) {
+                toast.success("🔔 Nouvelle commande reçue !");
+
+                const audio = new Audio("/notification.mp3");
+                audio.play();
             }
-        };
 
-        fetchCommandes();
+            setLastCount(nouvellesCommandes.length);
+            setCommandes(nouvellesCommandes);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCommandes(false);
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchCommandes(true);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [lastCount]);
 
     /* =========================
        DELETE
