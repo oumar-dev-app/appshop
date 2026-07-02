@@ -4,7 +4,7 @@ import AjouteCommandeBtn from "../../../_Components/AjouteCommandeBtn";
 import VoirCommandeBtn from "../../../_Components/VoirCommande";
 import { motion } from "framer-motion";
 import { Search, Trash } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 /* =========================
@@ -61,8 +61,12 @@ export default function CommandePage() {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [lastCount, setLastCount] = useState(0);
-    const [notificationAudio] = useState(() => new Audio("/notification.mp3"));
 
+    const notificationAudio = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        notificationAudio.current = new Audio("/notification.mp3");
+    }, []);
     /* =========================
        STATS
     ========================= */
@@ -112,11 +116,13 @@ export default function CommandePage() {
             ) {
                 toast.success("🔔 Nouvelle commande reçue !");
 
-                notificationAudio.currentTime = 0;
+                if (notificationAudio.current) {
+                    notificationAudio.current.currentTime = 0;
 
-                notificationAudio.play().catch((err) => {
-                    console.error(err);
-                });
+                    notificationAudio.current
+                        .play()
+                        .catch((err) => console.error("Erreur audio :", err));
+                }
             }
 
             setLastCount(nouvellesCommandes.length);
