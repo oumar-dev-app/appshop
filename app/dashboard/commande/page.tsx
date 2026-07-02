@@ -199,7 +199,7 @@ export default function CommandePage() {
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card title="📦 En attente" value={stats.en_attente ?? 0} />
                 <Card title="🚚 Livrées" value={stats.livree ?? 0} />
-                <Card title="Récupérée" value={stats.commande ?? 0} />
+                <Card title="Non récupérée" value={stats.commande ?? 0} />
                 <Card
                     title="💰 Chiffre d'affaires"
                     value={formatFCFA(stats.totalPrice ?? 0)}
