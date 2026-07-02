@@ -61,6 +61,7 @@ export default function CommandePage() {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [lastCount, setLastCount] = useState(0);
+    const [notificationAudio] = useState(() => new Audio("/notification.mp3"));
 
     /* =========================
        STATS
@@ -111,8 +112,11 @@ export default function CommandePage() {
             ) {
                 toast.success("🔔 Nouvelle commande reçue !");
 
-                const audio = new Audio("/notification.mp3");
-                audio.play();
+                notificationAudio.currentTime = 0;
+
+                notificationAudio.play().catch((err) => {
+                    console.error(err);
+                });
             }
 
             setLastCount(nouvellesCommandes.length);
