@@ -396,7 +396,7 @@ export default function ProduitsPage() {
                         </h1>
 
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f625d]">
-                            Gérez votre catalogue, vos prix et vos stocks
+                            Gérez votre produits, vos prix et vos stocks
                             depuis votre espace d’administration.
                         </p>
                     </div>
