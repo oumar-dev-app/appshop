@@ -29,17 +29,28 @@ export default function PersonnalisationPage() {
             try {
                 const token = localStorage.getItem("token");
 
-                const res = await fetch("/api/users", {
+                if (!token) {
+                    setUser(null);
+                    return;
+                }
+
+                const res = await fetch("/api/me", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
+                if (!res.ok) {
+                    throw new Error("Impossible de récupérer le profil");
+                }
+
                 const data = await res.json();
-                setUser(data.data?.[0] || null);
+
+                setUser(data.user || data.data || null);
             } catch (error) {
-                console.error(error);
+                console.error("Erreur récupération profil :", error);
+                setUser(null);
             }
         };
 
