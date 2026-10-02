@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* ================================
+MINI LUXE PARFUM — IDENTITÉ
+================================ */
+
+  --background: #fdfaf7;
+  --foreground: #2b211f;
+
+  /* Couleurs de marque */
+  --ml-bronze: #a66a4c;
+  --ml-bronze-dark: #7d4d38;
+  --ml-bronze-light: #c89a7c;
+
+  --ml-champagne: #d8b58a;
+  --ml-champagne-light: #ead8c0;
+
+  --ml-rose: #d9b8b0;
+  --ml-rose-light: #f2e5e1;
+
+  --ml-ivory: #fdfaf7;
+  --ml-cream: #f7f0e9;
+
+  --ml-brown: #2b211f;
+  --ml-brown-light: #6f625d;
+
+  --ml-white: #ffffff;
+
+  /* Interface */
+  --border: #eadfd8;
+  --muted: #8b7d77;
+
+  --success: #547a5b;
+  --danger: #a94b4b;
+
+  /* Ombres */
+  --shadow-soft: 0 8px 30px rgba(75, 49, 39, 0.08);
+  --shadow-card: 0 10px 35px rgba(75, 49, 39, 0.10);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: "Poppins", Arial, Helvetica, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+/* ================================
+RESET / BASE
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  background: var(--background);
+  color: var(--foreground);
+
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Titres élégants */
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--ml-brown);
+}
+
+/* ================================
+LIENS
+================================ */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ================================
+BOUTONS
+================================ */
+
+button {
+  font-family: inherit;
+}
+
+/* ================================
+SCROLLBAR
+================================ */
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ================================
+ANIMATIONS
+================================ */
+
+.fade-item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.fade-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Apparition douce */
+@keyframes ml-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ml-fade-up {
+  animation: ml-fade-up 0.7s ease-out both;
+}
+
+/* ================================
+SÉLECTION DU TEXTE
+================================ */
+
+::selection {
+  background: var(--ml-bronze);
+  color: var(--ml-white);
+}
+
+/* ================================
+UTILITAIRES MINI LUXE
+================================ */
+
+.ml-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.ml-card {
+  background: var(--ml-white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.ml-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 0 22px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: var(--ml-bronze);
+  color: var(--ml-white);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.ml-button-primary:hover {
+  background: var(--ml-bronze-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(125, 77, 56, 0.18);
+}
+
+.ml-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 0 22px;
+
+  border: 1px solid var(--ml-bronze);
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--ml-bronze);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.ml-button-secondary:hover {
+  background: var(--ml-bronze);
+  color: var(--ml-white);
+  transform: translateY(-1px);
+}
+
+/* ================================
+RESPONSIVE
+================================ */
+
+@media (max-width: 640px) {
+  .ml-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
