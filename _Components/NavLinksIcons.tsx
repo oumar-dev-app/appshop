@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import FormulaireRegister from "./FormulaireRegister";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 
 const NavLinksIcons = () => {
   const [modal, setModal] = useState<
@@ -235,24 +236,26 @@ const NavLinksIcons = () => {
         </button>
       </div>
 
+ 
       {/* MODALES */}
-      {modal && (
-        <div
-          onClick={() => setModal(null)}
-          className="
-            fixed
-            inset-0
-            z-100
-            flex
-            items-start
-            justify-center
-            overflow-y-auto
-            p-4
-            pt-6
-            sm:items-center
-            sm:pt-4
-          "
-        >
+      {modal &&
+        createPortal(
+          <div
+            onClick={() => setModal(null)}
+            className="
+              fixed
+              inset-0
+              z-9999
+              flex
+              items-start
+              justify-center
+              overflow-y-auto
+              p-4
+              pt-6
+              sm:items-center
+              sm:pt-4
+            "
+          >
           {/* BACKDROP */}
           <div
             className="
@@ -598,8 +601,9 @@ const NavLinksIcons = () => {
               />
             </div>
           )}
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 };
