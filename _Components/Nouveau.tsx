@@ -69,7 +69,7 @@ const Nouveau = () => {
         </div>
 
         <Link
-          href="/produits"
+          href="/categories"
           className="group hidden shrink-0 items-center gap-2 text-sm font-semibold !text-[#a66a4c] transition-colors duration-300 hover:!text-[#7d4d38] sm:flex"
         >
           Voir toute la collection
